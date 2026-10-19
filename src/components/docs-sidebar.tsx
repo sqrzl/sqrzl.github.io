@@ -55,9 +55,9 @@ const sections = [
   },
 ];
 
-export function DocsSidebar({ current }: { current?: string }) {
+function DocsNavigation({ current }: { current?: string }) {
   return (
-    <aside class="docs-sidebar" aria-label="Documentation">
+    <>
       <a class="docs-home-link" href="docs/">
         All documentation
       </a>
@@ -82,6 +82,25 @@ export function DocsSidebar({ current }: { current?: string }) {
           </Section>
         )}
       </For>
+    </>
+  );
+}
+
+export function DocsSidebar({ current }: { current?: string }) {
+  return (
+    <aside class="docs-sidebar" aria-label="Documentation">
+      <nav class="docs-desktop-navigation" aria-label="Documentation pages">
+        <DocsNavigation current={current} />
+      </nav>
+      <details class="docs-mobile-navigation">
+        <summary>Browse documentation</summary>
+        <nav
+          class="docs-mobile-navigation-links"
+          aria-label="Documentation pages"
+        >
+          <DocsNavigation current={current} />
+        </nav>
+      </details>
     </aside>
   );
 }
