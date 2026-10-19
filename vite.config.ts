@@ -27,7 +27,7 @@ export default defineConfig({
     open: true,
   },
   build: {
-    outDir: 'dist/static',
+    outDir: 'dist/client',
     sourcemap: true,
   },
 });

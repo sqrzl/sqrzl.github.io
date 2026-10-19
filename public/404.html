@@ -4,18 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f7f7f2" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <title>sqrzl - Page not found</title>
+    <title>Page not found | Sqrzl</title>
     <style>
       :root {
-        color-scheme: dark;
-        --bg: #06070b;
-        --surface: rgba(14, 19, 30, 0.92);
-        --border: rgba(255, 255, 255, 0.1);
-        --text: #f5f7fb;
-        --muted: #aeb8cc;
-        --accent: #f0b85c;
-        --accent-2: #69dbc2;
+        color-scheme: light;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: #252922;
+        background: #f7f7f2;
       }
 
       * {
@@ -23,102 +20,41 @@
       }
 
       body {
-        margin: 0;
         min-height: 100vh;
+        margin: 0;
         display: grid;
         place-items: center;
-        padding: 2rem;
-        font-family: 'Segoe UI', Arial, sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(circle at 15% 10%, rgba(240, 184, 92, 0.18), transparent 24%),
-          radial-gradient(circle at 85% 0%, rgba(105, 219, 194, 0.12), transparent 32%),
-          linear-gradient(180deg, #07080c 0%, #0b1020 45%, #06070b 100%);
+        padding: 1.5rem;
       }
 
       main {
-        width: min(100%, 44rem);
-        padding: 2rem;
-        border-radius: 30px;
-        border: 1px solid var(--border);
-        background: var(--surface);
-        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
-      }
-
-      .eyebrow {
-        margin: 0;
-        color: var(--accent-2);
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        font-size: 0.78rem;
-        font-weight: 700;
+        width: min(100%, 42rem);
+        padding: 2rem 0;
+        border-top: 1px solid #d8dbd2;
       }
 
       h1 {
-        margin: 0.5rem 0 1rem;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: clamp(2.6rem, 8vw, 4.5rem);
-        line-height: 0.95;
-        letter-spacing: -0.05em;
+        margin: 0;
+        font-size: clamp(2rem, 8vw, 3.2rem);
+        letter-spacing: -0.045em;
+        line-height: 1.1;
       }
 
       p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
-        max-width: 42ch;
-      }
-
-      .actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-top: 1.5rem;
+        color: #5c625a;
       }
 
       a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 3rem;
-        padding: 0.85rem 1.15rem;
-        border-radius: 999px;
-        text-decoration: none;
-        border: 1px solid var(--border);
-        color: var(--text);
-      }
-
-      a.primary {
-        background: linear-gradient(135deg, var(--accent), #f7d89a);
-        color: #0b0f16;
-        border-color: transparent;
-      }
-
-      @media (max-width: 640px) {
-        body {
-          padding: 1rem;
-        }
-
-        main {
-          padding: 1.5rem;
-        }
-
-        .actions a {
-          width: 100%;
-        }
+        color: #28613c;
+        text-underline-offset: 0.16em;
       }
     </style>
   </head>
   <body>
     <main>
-      <p class="eyebrow">404</p>
       <h1>Page not found</h1>
-      <p>
-        The page you requested is not part of the current sqrzl website.
-      </p>
-      <div class="actions">
-        <a class="primary" href="./">Return home</a>
-      </div>
+      <p>The address may have changed. Try the home page or documentation.</p>
+      <p><a href="./">Home</a> · <a href="./docs/">Documentation</a></p>
     </main>
   </body>
 </html>

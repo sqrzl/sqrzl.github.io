@@ -1,72 +1,83 @@
-import { ArrowRightIcon, LayoutPanelTopIcon, ShieldCheckIcon, WorkflowIcon } from '@askrjs/lucide';
+import { ArrowRightIcon } from '@askrjs/lucide';
 
-import { ContentRows, LandingHero, PageSection } from '../components/site';
-
-const overviewCards = [
-  {
-    icon: <WorkflowIcon size={24} aria-hidden="true" />,
-    title: 'Local emulator first',
-    description:
-      'sqrzl peas gives you a storage target you can run on your own machine before you touch any cloud account.',
-  },
-  {
-    icon: <LayoutPanelTopIcon size={24} aria-hidden="true" />,
-    title: 'Five client implementations',
-    description:
-      'The TypeScript, Go, Rust, Python, and .NET clients all point at the same emulator surface.',
-  },
-  {
-    icon: <ShieldCheckIcon size={24} aria-hidden="true" />,
-    title: 'Vendor parity you can see',
-    description:
-      'The emulator keeps S3, Azure Blob, GCS, and OCI behavior visible while you stay local.',
-  },
-];
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <>
-      <LandingHero
-        eyebrow="sqrzl peas"
-        title="What is sqrzl peas?"
-        lead="sqrzl peas is the local emulator and client family for object storage work. It gives you one place to test, compare, and document the behavior your apps depend on."
-        actions={[
-          {
-            label: 'About the emulator',
-            href: 'emulator/',
-            variant: 'primary',
-            icon: <ArrowRightIcon size={16} aria-hidden="true" />,
-          },
-          {
-            label: 'See the clients',
-            href: 'clients/',
-            variant: 'secondary',
-          },
-        ]}
-        panelLabel="Overview"
-        statusItems={[
-          { value: 'Peas', label: 'emulator first' },
-          { value: '5', label: 'client implementations' },
-          { value: 'Local', label: 'storage workflow' },
-        ]}
-        panelFootnote="The site is here to explain the emulator, the client implementations, and the shared storage surface they all talk to."
-      />
+    <div class="home-page">
+      <section class="home-intro">
+        <h1>Run your cloud services locally.</h1>
+        <p class="home-lead">
+          Sqrzl is a Docker-ready emulator for local development and CI. Point
+          your existing clients at familiar endpoints, test the behavior you
+          need, and keep the feedback loop on your machine.
+        </p>
+        <p class="home-actions">
+          <a class="button button-primary" href="docs/quick-start/">
+            Start the emulator
+            <ArrowRightIcon size={16} aria-hidden="true" />
+          </a>
+          <a class="button button-link" href="docs/">
+            Read the documentation
+          </a>
+        </p>
+      </section>
 
-      <PageSection
-        id="what-it-is-for"
-        eyebrow="At a glance"
-        title="Three things to know before you dive deeper."
-        description="Use this site as a quick map: what the emulator does, which clients exist, and why the project exists in the first place."
+      <section class="home-section" aria-labelledby="services-heading">
+        <h2 id="services-heading">What it emulates</h2>
+        <div class="service-list">
+          <div>
+            <h3>Object and blob storage</h3>
+            <p>
+              S3, Azure Blob Storage, Google Cloud Storage, and OCI Object
+              Storage.
+            </p>
+          </div>
+          <div>
+            <h3>Email</h3>
+            <p>
+              Local SMTP capture, plus scoped SendGrid, Amazon SES, and Azure
+              Communication Services APIs.
+            </p>
+          </div>
+          <div>
+            <h3>SMS and messaging</h3>
+            <p>
+              Local adapters for Twilio, Amazon SNS, AWS SMS Voice, and Azure
+              Communication Services.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="home-section start-section"
+        aria-labelledby="start-heading"
       >
-        <ContentRows
-          items={overviewCards.map((item) => ({
-            eyebrow: 'Overview',
-            icon: item.icon,
-            title: item.title,
-            description: item.description,
-          }))}
-        />
-      </PageSection>
-    </>
+        <div>
+          <h2 id="start-heading">Start with Docker Compose</h2>
+          <p>Clone the emulator and start it from its repository:</p>
+        </div>
+        <pre>
+          <code>
+            {
+              'git clone https://github.com/sqrzl/sqrzl-emulator.git\ncd sqrzl-emulator\ndocker compose up --build'
+            }
+          </code>
+        </pre>
+        <p>
+          Storage APIs are at <code>localhost:9000</code>; the admin UI is at{' '}
+          <code>localhost:9001</code>. The Compose setup enables authentication;
+          the quickstart lists its local credentials and health checks.
+        </p>
+      </section>
+
+      <section class="home-note" aria-label="Project status">
+        <p>
+          Sqrzl is a development emulator, not a production service.
+          Compatibility is scoped by provider; check the{' '}
+          <a href="docs/compatibility/">compatibility notes</a> for the
+          operations your app depends on.
+        </p>
+      </section>
+    </div>
   );
 }

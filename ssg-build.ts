@@ -3,10 +3,19 @@ import { join } from 'node:path';
 
 import { createStaticGen } from '@askrjs/askr/ssg';
 
-import { outputDir, routes } from './ssg.config';
+import { registry } from './src/routes';
+import { clientOutputDir, outputDir } from './ssg.config';
 
-const rootHtmlPath = join(outputDir, 'index.html');
-const ssg = createStaticGen({ routes, outputDir });
+const rootHtmlPath = join(clientOutputDir, 'index.html');
+const ssg = createStaticGen({
+  registry,
+  outputDir,
+  assets: [
+    { from: join(clientOutputDir, 'assets'), to: 'assets' },
+    { from: join(clientOutputDir, 'favicon.svg') },
+    { from: join(clientOutputDir, '404.html') },
+  ],
+});
 const rootShell = await readFile(rootHtmlPath, 'utf8');
 const result = await ssg.generate({ mode: 'full' });
 
@@ -18,19 +27,53 @@ const routeMetadata: Record<
   }
 > = {
   'index.html': {
-    title: 'sqrzl peas',
+    title: 'Sqrzl Emulator',
     description:
-      'sqrzl peas is the emulator and client family for local object storage workflows.',
+      'Run object storage, email, and messaging services locally with the Sqrzl emulator.',
   },
-  'clients/index.html': {
-    title: 'sqrzl peas | Clients',
+  'docs/index.html': {
+    title: 'Documentation | Sqrzl Emulator',
     description:
-      'Explore the sqrzl client implementations in TypeScript, Go, Rust, Python, and .NET.',
+      'Quickstarts and focused guides for running and using the Sqrzl emulator.',
   },
-  'emulator/index.html': {
-    title: 'sqrzl peas | Emulator',
+  'docs/quick-start/index.html': {
+    title: 'Quickstart | Sqrzl Emulator',
     description:
-      'Learn why the sqrzl emulator exists and how it keeps vendor compatibility visible.',
+      'Start Sqrzl with Docker Compose and check the local services.',
+  },
+  'docs/s3/index.html': {
+    title: 'S3 | Sqrzl Emulator',
+    description: 'Connect an S3-compatible client to the Sqrzl emulator.',
+  },
+  'docs/azure-blob/index.html': {
+    title: 'Azure Blob Storage | Sqrzl Emulator',
+    description: 'Connect an Azure Blob Storage client to Sqrzl.',
+  },
+  'docs/gcs/index.html': {
+    title: 'Google Cloud Storage | Sqrzl Emulator',
+    description: 'Connect Google Cloud Storage clients to Sqrzl.',
+  },
+  'docs/oci/index.html': {
+    title: 'OCI Object Storage | Sqrzl Emulator',
+    description: 'Configure OCI Object Storage clients for the Sqrzl emulator.',
+  },
+  'docs/configuration/index.html': {
+    title: 'Configuration | Sqrzl Emulator',
+    description:
+      'Configure authentication, ports, storage, and request limits.',
+  },
+  'docs/persistence/index.html': {
+    title: 'Data and reset | Sqrzl Emulator',
+    description: 'Keep, back up, and reset local Sqrzl emulator data.',
+  },
+  'docs/email-and-messaging/index.html': {
+    title: 'Email and messaging | Sqrzl Emulator',
+    description: 'Use local email and messaging emulation with Sqrzl.',
+  },
+  'docs/compatibility/index.html': {
+    title: 'Compatibility | Sqrzl Emulator',
+    description:
+      'Review provider compatibility and supported Sqrzl operations.',
   },
 };
 
@@ -58,19 +101,26 @@ function buildDocument(shellHtml: string, filePath: string, html: string) {
   const metadata = routeMetadata[normalizedPath] ?? routeMetadata['index.html'];
   const baseHref = getBaseHref(normalizedPath);
   const titlePattern = /<title>[\s\S]*?<\/title>/;
-  const descriptionPattern = /<meta\s+name="description"\s+content="[^"]*"\s*\/>/;
+  const descriptionPattern =
+    /<meta\s+name="description"\s+content="[^"]*"\s*\/>/;
   const appMountPattern = /<div id="app">\s*<\/div>/;
 
   if (!appMountPattern.test(shellHtml)) {
     throw new Error('Root template is missing the #app mount point.');
   }
 
-  let documentHtml = shellHtml.replace(titlePattern, `<title>${escapeHtml(metadata.title)}</title>`);
+  let documentHtml = shellHtml.replace(
+    titlePattern,
+    `<title>${escapeHtml(metadata.title)}</title>`
+  );
   documentHtml = documentHtml.replace(
     descriptionPattern,
-    `<meta name="description" content="${escapeHtml(metadata.description)}" />`,
+    `<meta name="description" content="${escapeHtml(metadata.description)}" />`
   );
-  documentHtml = documentHtml.replace(titlePattern, (match) => `${match}\n    <base href="${baseHref}" />`);
+  documentHtml = documentHtml.replace(
+    titlePattern,
+    (match) => `${match}\n    <base href="${baseHref}" />`
+  );
 
   return documentHtml.replace(appMountPattern, `<div id="app">${html}</div>`);
 }
@@ -83,7 +133,10 @@ if (result.failed > 0) {
 }
 
 const rootRoute = result.routes.find(
-  (route) => route.filePath.replace(/^\/+/, '') === 'index.html' && route.status === 'success' && route.written,
+  (route) =>
+    route.filePath.replace(/^\/+/, '') === 'index.html' &&
+    route.status === 'success' &&
+    route.written
 );
 
 if (!rootRoute) {
