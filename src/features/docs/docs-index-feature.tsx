@@ -40,9 +40,14 @@ const guides = [
       'Keep emulator data between runs or remove a disposable volume.',
   },
   {
-    href: 'docs/email-and-messaging/',
-    title: 'Email and messaging',
-    description: 'Find the local SMTP, email API, and SMS adapter endpoints.',
+    href: 'docs/email/',
+    title: 'Email',
+    description: 'Connect SMTP, SendGrid, SES, or Azure Communication Services Email.',
+  },
+  {
+    href: 'docs/sms/',
+    title: 'SMS and MMS',
+    description: 'Connect a text provider and simulate inbound messages and delivery.',
   },
   {
     href: 'docs/compatibility/',

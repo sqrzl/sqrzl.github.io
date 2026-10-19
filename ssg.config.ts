@@ -9,7 +9,10 @@ const clientOutputDir = './dist/client';
 const outputDir = './dist/static';
 const siteUrl = 'https://sqrzl.github.io';
 
-const routeMetadata: Record<string, { title: string; description: string }> = {
+const routeMetadata: Record<
+  string,
+  { title: string; description: string; markdown?: string }
+> = {
   '/': {
     title: 'Sqrzl Emulator',
     description:
@@ -48,9 +51,21 @@ const routeMetadata: Record<string, { title: string; description: string }> = {
     title: 'Data and reset | Sqrzl Emulator',
     description: 'Keep, back up, and reset local Sqrzl emulator data.',
   },
+  '/docs/email': {
+    title: 'Email | Sqrzl Emulator',
+    description:
+      'Connect SMTP, SendGrid, Amazon SES v2, or Azure Communication Services Email and inspect captured messages.',
+    markdown: '/docs/email.md',
+  },
+  '/docs/sms': {
+    title: 'SMS and MMS | Sqrzl Emulator',
+    description:
+      'Connect Twilio, Amazon SNS, AWS End User Messaging, or Azure Communication Services SMS and simulate delivery.',
+    markdown: '/docs/sms.md',
+  },
   '/docs/email-and-messaging': {
     title: 'Email and messaging | Sqrzl Emulator',
-    description: 'Use local email and messaging emulation with Sqrzl.',
+    description: 'Choose the focused Sqrzl Email or SMS guide.',
   },
   '/docs/compatibility': {
     title: 'Compatibility | Sqrzl Emulator',
@@ -103,7 +118,33 @@ function renderDocument({ appHtml, context }: DocumentRenderArgs) {
   );
   documentHtml = documentHtml.replace(
     descriptionPattern,
-    `<meta name="description" content="${escapeHtml(metadata.description)}" />`
+    (match) => {
+      const canonicalUrl =
+        context.route.path === '/'
+          ? `${siteUrl}/`
+          : `${siteUrl}${context.route.path.replace(/\/+$/, '')}/`;
+      const metadataTags = [
+        `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />`,
+        `<link rel="describedby" href="${siteUrl}/llms.txt" />`,
+        metadata.markdown
+          ? `<link rel="alternate" type="text/markdown" href="${siteUrl}${metadata.markdown}" />`
+          : '',
+        '<meta property="og:type" content="website" />',
+        `<meta property="og:site_name" content="Sqrzl" />`,
+        `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`,
+        `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`,
+        `<meta property="og:url" content="${escapeHtml(canonicalUrl)}" />`,
+        `<meta property="og:image" content="${siteUrl}/assets/sqrzl.png" />`,
+        '<meta property="og:image:alt" content="Sqrzl logo" />',
+        '<meta name="twitter:card" content="summary" />',
+        `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
+        `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`,
+      ]
+        .filter(Boolean)
+        .join('\n    ');
+
+      return `${match}\n    ${metadataTags}`;
+    }
   );
   documentHtml = documentHtml.replace(
     titlePattern,
@@ -128,6 +169,8 @@ export const staticConfig = {
   document: renderDocument,
   assets: [
     { from: resolve(clientOutputDir, 'assets'), to: 'assets' },
+    { from: resolve(clientOutputDir, 'docs'), to: 'docs' },
     { from: resolve(clientOutputDir, '404.html') },
+    { from: resolve(clientOutputDir, 'llms.txt') },
   ],
 };

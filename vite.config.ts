@@ -3,7 +3,14 @@ import { askr } from '@askrjs/vite';
 
 export default defineConfig({
   base: '/',
-  plugins: [askr()],
+  plugins: [
+    askr({
+      images: {
+        widths: [32, 64, 128],
+        quality: { avif: 70, webp: 85 },
+      },
+    }),
+  ],
   lint: {
     ignorePatterns: ['dist/**', 'node_modules/**', 'coverage/**'],
   },

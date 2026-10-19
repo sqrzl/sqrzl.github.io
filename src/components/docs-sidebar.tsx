@@ -34,12 +34,17 @@ const sections = [
     ],
   },
   {
-    title: 'Other services',
+    title: 'Email and SMS',
     pages: [
       {
-        key: 'email-and-messaging',
-        label: 'Email and messaging',
-        href: 'docs/email-and-messaging/',
+        key: 'email',
+        label: 'Email',
+        href: 'docs/email/',
+      },
+      {
+        key: 'sms',
+        label: 'SMS and MMS',
+        href: 'docs/sms/',
       },
       {
         key: 'compatibility',

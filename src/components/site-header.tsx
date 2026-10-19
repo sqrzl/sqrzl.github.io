@@ -1,5 +1,11 @@
 import { GitHubLogo } from '@askrjs/logos';
 import { BookOpenIcon } from '@askrjs/lucide';
+import { Image, image } from '@askrjs/vite/image';
+
+const sqrzlLogo = image(new URL('../assets/sqrzl-logo.png', import.meta.url), {
+  widths: [32, 64, 128],
+  quality: { avif: 70, webp: 85 },
+});
 
 export function SiteHeader() {
   return (
@@ -10,7 +16,12 @@ export function SiteHeader() {
       <header class="site-header">
         <div class="site-header-inner page-container">
           <a class="brand" href="/" aria-label="Sqrzl home">
-            <img class="brand-logo" src="/assets/sqrzl.png" alt="" />
+            <Image
+              image={sqrzlLogo}
+              class="brand-logo"
+              sizes="32px"
+              alt=""
+            />
             <span class="brand-name">Sqrzl</span>
             <span class="brand-description">Local service emulator</span>
           </a>

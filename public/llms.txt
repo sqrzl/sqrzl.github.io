@@ -1,0 +1,32 @@
+# Sqrzl
+
+> Sqrzl is a local emulator for object storage, email, and SMS APIs. It captures provider requests for development and CI; it does not deliver email or text messages to real recipients.
+
+Start with the quickstart. The HTTP API listens on port 9000, the admin UI on port 9001, and SMTP on port 2525. Provider support is intentionally partial; check the compatibility matrix before relying on an operation or field.
+
+## Getting started
+
+- [Quickstart](https://sqrzl.github.io/docs/quick-start/): Start Sqrzl with Docker Compose and check readiness.
+- [Configuration](https://sqrzl.github.io/docs/configuration/): Configure authentication, ports, storage, and request limits.
+- [Data and reset](https://sqrzl.github.io/docs/persistence/): Keep or reset local emulator data.
+
+## Email and SMS
+
+- [Email guide](https://sqrzl.github.io/docs/email.md): Connect SMTP, SendGrid, Amazon SES v2, or Azure Communication Services Email; inspect captured messages.
+- [SMS and MMS guide](https://sqrzl.github.io/docs/sms.md): Connect Twilio, Amazon SNS, AWS End User Messaging, or Azure Communication Services SMS; simulate inbound messages and delivery updates.
+- [Compatibility matrix](https://sqrzl.github.io/docs/compatibility/): Review supported operations, request shapes, and unsupported features.
+- [SMS and MMS emulator reference](https://github.com/sqrzl/sqrzl-emulator/blob/main/docs/text-emulation.md): Callback security, delivery simulation, media behavior, and SMS scope.
+- [Emulator README](https://github.com/sqrzl/sqrzl-emulator/blob/main/README.md): Runtime configuration and provider endpoint summary.
+
+## Object storage
+
+- [Amazon S3](https://sqrzl.github.io/docs/s3/)
+- [Azure Blob Storage](https://sqrzl.github.io/docs/azure-blob/)
+- [Google Cloud Storage](https://sqrzl.github.io/docs/gcs/)
+- [OCI Object Storage](https://sqrzl.github.io/docs/oci/)
+
+## Site
+
+- [Sqrzl home](https://sqrzl.github.io/)
+- [All documentation](https://sqrzl.github.io/docs/)
+- [Emulator source repository](https://github.com/sqrzl/sqrzl-emulator)
