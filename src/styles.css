@@ -118,7 +118,13 @@ pre {
 }
 
 pre code {
+  display: block;
   font-size: inherit;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
 }
 
 .site-shell {
@@ -773,22 +779,6 @@ th {
 
   .docs-mobile-navigation .docs-nav-section a {
     padding: 0.45rem 0.65rem;
-  }
-
-  .docs-mobile-navigation a[data-slot='dialog-close'] {
-    min-height: 0;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    box-shadow: none;
-    font: inherit;
-    text-align: left;
-    text-decoration: none;
-  }
-
-  .docs-mobile-navigation a[data-slot='dialog-close']:hover {
-    background: var(--ak-color-hover);
-    color: var(--ak-color-link);
   }
 }
 

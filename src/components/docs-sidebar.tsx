@@ -67,36 +67,12 @@ const sections = [
   },
 ];
 
-function DocsNavigation({
-  current,
-  closeOnNavigate = false,
-}: {
-  current?: string;
-  closeOnNavigate?: boolean;
-}) {
-  const renderLink = (href: string, label: string, ariaCurrent?: 'page') => {
-    const link = (
-      <a href={href} aria-current={ariaCurrent}>
-        {label}
-      </a>
-    );
-
-    return closeOnNavigate ? <SheetClose asChild>{link}</SheetClose> : link;
-  };
-
+function DocsNavigation({ current }: { current?: string }) {
   return (
     <>
-      {closeOnNavigate ? (
-        <SheetClose asChild>
-          <a class="docs-home-link" href="docs/">
-            All documentation
-          </a>
-        </SheetClose>
-      ) : (
-        <a class="docs-home-link" href="docs/">
-          All documentation
-        </a>
-      )}
+      <a class="docs-home-link" href="docs/">
+        All documentation
+      </a>
       <For each={sections} by={(section) => section.title}>
         {(section) => (
           <Section className="docs-nav-section">
@@ -105,11 +81,12 @@ function DocsNavigation({
               <For each={section.pages} by={(page) => page.key}>
                 {(page) => (
                   <li>
-                    {renderLink(
-                      page.href,
-                      page.label,
-                      current === page.key ? 'page' : undefined
-                    )}
+                    <a
+                      href={page.href}
+                      aria-current={current === page.key ? 'page' : undefined}
+                    >
+                      {page.label}
+                    </a>
                   </li>
                 )}
               </For>
@@ -153,7 +130,7 @@ export function DocsSidebar({ current }: { current?: string }) {
               class="docs-mobile-navigation"
               aria-label="Documentation pages"
             >
-              <DocsNavigation current={current} closeOnNavigate />
+              <DocsNavigation current={current} />
             </nav>
           </SheetContent>
         </SheetPortal>
