@@ -3,7 +3,7 @@ import { Section } from './ui/section';
 
 export function NotFoundContent() {
   return (
-    <Section className="not-found-page">
+    <Section className="not-found-page page-container">
       <h1>Page not found</h1>
       <p>
         The address may have changed. Return home or open the documentation

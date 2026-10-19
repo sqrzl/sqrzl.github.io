@@ -1,3 +1,5 @@
+import { For } from '@askrjs/askr/control';
+
 import { Section } from '../ui/section';
 
 const services = [
@@ -23,12 +25,14 @@ export function ServiceList() {
     <Section className="home-section" ariaLabelledBy="services-heading">
       <h2 id="services-heading">What it emulates</h2>
       <div class="service-list">
-        {services.map((service) => (
-          <div key={service.title}>
-            <h3>{service.title}</h3>
-            <p>{service.description}</p>
-          </div>
-        ))}
+        <For each={services} by={(service) => service.title}>
+          {(service) => (
+            <div>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </div>
+          )}
+        </For>
       </div>
     </Section>
   );

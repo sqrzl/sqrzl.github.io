@@ -1,3 +1,5 @@
+import { GitHubLogo } from '@askrjs/logos';
+
 import { DocSection } from '../../components/doc-section';
 import { DocsLayout } from '../../components/docs-layout';
 
@@ -15,13 +17,15 @@ export default function CompatibilityDocsFeature() {
           Sqrzl currently accepts.
         </p>
         <p>
+          Open the full compatibility matrix:{' '}
           <a
-            class="text-link"
+            class="icon-link icon-link-inline"
             href="https://github.com/sqrzl/sqrzl-emulator/blob/main/compatibility-matrix.json"
             target="_blank"
             rel="noreferrer"
+            aria-label="Open the compatibility matrix on GitHub"
           >
-            Open the compatibility matrix on GitHub
+            <GitHubLogo size={16} aria-hidden="true" />
           </a>
         </p>
       </DocSection>

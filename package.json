@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vp dev",
     "build": "vp build && npm run generate",
-    "generate": "tsx ssg-build.ts",
-    "preview": "vp preview",
+    "generate": "askr ssg --config ./ssg.config.ts --output ./dist/static",
+    "analyze": "askr analyze --check",
+    "preview": "vp preview --outDir dist/static",
     "type-check": "tsc --noEmit",
     "lint": "vp lint .",
     "fmt": "vp fmt ."
@@ -18,6 +19,7 @@
     "@askrjs/lucide": "^0.5.0"
   },
   "devDependencies": {
+    "@askrjs/cli": "^0.5.0",
     "@askrjs/vite": ">=0.5.0 <0.6.0",
     "@types/node": "^26.6.5",
     "tsx": "^4.23.15",

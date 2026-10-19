@@ -1,3 +1,5 @@
+import { For } from '@askrjs/askr/control';
+
 import { Section } from './ui/section';
 
 const sections = [
@@ -54,23 +56,27 @@ export function DocsSidebar({ current }: { current?: string }) {
       <a class="docs-home-link" href="docs/">
         All documentation
       </a>
-      {sections.map((section) => (
-        <Section className="docs-nav-section" key={section.title}>
-          <h2>{section.title}</h2>
-          <ul>
-            {section.pages.map((page) => (
-              <li key={page.key}>
-                <a
-                  href={page.href}
-                  aria-current={current === page.key ? 'page' : undefined}
-                >
-                  {page.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ))}
+      <For each={sections} by={(section) => section.title}>
+        {(section) => (
+          <Section className="docs-nav-section">
+            <h2>{section.title}</h2>
+            <ul>
+              <For each={section.pages} by={(page) => page.key}>
+                {(page) => (
+                  <li>
+                    <a
+                      href={page.href}
+                      aria-current={current === page.key ? 'page' : undefined}
+                    >
+                      {page.label}
+                    </a>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </Section>
+        )}
+      </For>
     </aside>
   );
 }

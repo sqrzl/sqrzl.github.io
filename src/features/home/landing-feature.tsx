@@ -5,7 +5,7 @@ import { ServiceList } from '../../components/home/service-list';
 
 export function LandingFeature() {
   return (
-    <div class="home-page">
+    <div class="home-page page-container">
       <HomeIntro />
       <ServiceList />
       <ComposeQuickStart />

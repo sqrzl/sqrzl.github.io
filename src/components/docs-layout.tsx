@@ -14,7 +14,7 @@ export function DocsLayout({
   children,
 }: DocsLayoutProps) {
   return (
-    <div class="docs-layout">
+    <div class="docs-layout page-container">
       <DocsSidebar current={current} />
       <article class="docs-article">
         <header class="docs-page-header">

@@ -12,9 +12,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "@askrjs/askr"
   },
-  "include": ["src", "ssg-build.ts", "ssg.config.ts"],
+  "include": ["src", "ssg.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

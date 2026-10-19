@@ -2,7 +2,7 @@ import { defineConfig } from 'vite-plus';
 import { askr } from '@askrjs/vite';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [askr()],
   lint: {
     ignorePatterns: ['dist/**', 'node_modules/**', 'coverage/**'],
