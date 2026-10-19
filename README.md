@@ -67,14 +67,8 @@ Markdown version, add its file under `public/docs/` and set the route's
 
 ## Deployment
 
-The source repository is [`sqrzl/website`](https://github.com/sqrzl/website).
-The public root domain is published from
-[`sqrzl/sqrzl.github.io`](https://github.com/sqrzl/sqrzl.github.io). Push the
-same source commit to both repositories to update the site. The `pages` remote
-in this checkout points to `sqrzl/sqrzl.github.io`.
-
-In the root-domain repository, `.github/workflows/pages.yml` installs locked
+[`sqrzl/sqrzl.github.io`](https://github.com/sqrzl/sqrzl.github.io) is the
+canonical source repository and publishes the site at the root domain. Push to
+its `main` branch to deploy. Its `.github/workflows/pages.yml` installs locked
 dependencies with `npm ci`, runs `npm run build` (Vite Plus followed by
-`askr ssg`), and publishes `dist/static` with GitHub's Pages actions. The
-workflow skips deployment when it runs from `sqrzl/website`, preventing a
-second copy at `/website/`.
+`askr ssg`), and publishes `dist/static` with GitHub's Pages actions.
