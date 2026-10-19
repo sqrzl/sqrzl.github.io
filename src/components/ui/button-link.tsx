@@ -1,3 +1,5 @@
+import { Button } from '@askrjs/themes/button';
+
 type ButtonLinkProps = {
   href: string;
   variant?: 'primary' | 'link';
@@ -10,8 +12,10 @@ export function ButtonLink({
   children,
 }: ButtonLinkProps) {
   return (
-    <a class={`button button-${variant}`} href={href}>
-      {children}
-    </a>
+    <Button asChild variant={variant}>
+      <a class="home-button" href={href}>
+        {children}
+      </a>
+    </Button>
   );
 }

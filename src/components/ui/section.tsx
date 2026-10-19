@@ -1,3 +1,5 @@
+import { Section as ThemeSection } from '@askrjs/themes/section';
+
 type SectionProps = {
   className?: string;
   ariaLabel?: string;
@@ -12,12 +14,14 @@ export function Section({
   children,
 }: SectionProps) {
   return (
-    <section
-      class={className}
+    <ThemeSection
+      className={className}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
+      gap="0"
+      paddingY="0"
     >
       {children}
-    </section>
+    </ThemeSection>
   );
 }

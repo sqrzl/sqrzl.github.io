@@ -39,6 +39,7 @@ jobs:
           path: ./dist/static
 
   deploy:
+    if: github.repository == 'sqrzl/sqrzl.github.io'
     needs: build
     runs-on: ubuntu-24.04
     steps:

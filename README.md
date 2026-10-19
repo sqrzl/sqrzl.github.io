@@ -7,7 +7,9 @@ The public marketing page and user documentation for the
 The site is built with Askr and Vite Plus. Askr provides the JSX runtime and
 route registry; the Askr CLI generates deployable pages from that shared
 registry. Vite Plus (`vp`) runs the development server and builds the browser
-assets.
+assets. The visual foundation and shared UI patterns come from
+[`@askrjs/themes`](https://github.com/askrjs/askr-themes), with the site's
+warm neutral palette and compact geometry applied through Askr token overrides.
 
 ## Develop locally
 
@@ -41,20 +43,38 @@ Pages follow the composition hierarchy
 - `src/pages/` contains thin route entrypoints.
 - `src/features/` composes the page-level content and behavior.
 - `src/components/` contains reusable site, docs, and landing-page components.
-- `src/components/ui/` contains the small shared UI primitives.
+- `src/components/ui/` contains small adapters over Askr theme primitives and
+  semantic elements, such as the site section, action link, and code block.
 - `src/routes.tsx` declares the Askr route registry used for site navigation and static generation.
-- `src/styles.css` contains the shared layout and visual styles.
+- `src/styles.css` imports the Askr theme foundations and the component styles
+  used by the site. Its `--ak-*` overrides retain the existing palette,
+  typography, compact controls, and low radius; site-specific layout recipes
+  stay alongside the site.
 - `ssg.config.ts` configures the Askr CLI's `askr ssg` command, document metadata, static assets, and sitemap.
+
+The shared header, footer, sections, page headers, buttons, and mobile docs
+drawer use Askr theme components. The docs drawer composes the theme's Sheet
+with its dialog interaction behavior. The static document renderer wraps
+Askr's `withThemeStyles` helper so generated layout styles are present on the
+first page load.
 
 Use kebab-case for route paths and source filenames. To add a documentation
 page, add its thin route page and feature, register the path in
 `src/routes.tsx`, add its link to `src/components/docs-sidebar.tsx`, and add its
-title and description to the route metadata in `ssg.config.ts`.
+title and description to the route metadata in `ssg.config.ts`. For a standalone
+Markdown version, add its file under `public/docs/` and set the route's
+`markdown` metadata field.
 
 ## Deployment
 
-`.github/workflows/pages.yml` deploys the site to GitHub Pages when a commit is
-pushed to `main` or the workflow is started manually. It installs locked
-dependencies with `npm ci`, runs `npm run build`, and publishes `dist/static`.
-Because the repository is `sqrzl.github.io`, the site is served from the domain
-root rather than a repository subpath.
+The source repository is [`sqrzl/website`](https://github.com/sqrzl/website).
+The public root domain is published from
+[`sqrzl/sqrzl.github.io`](https://github.com/sqrzl/sqrzl.github.io). Push the
+same source commit to both repositories to update the site. The `pages` remote
+in this checkout points to `sqrzl/sqrzl.github.io`.
+
+In the root-domain repository, `.github/workflows/pages.yml` installs locked
+dependencies with `npm ci`, runs `npm run build` (Vite Plus followed by
+`askr ssg`), and publishes `dist/static` with GitHub's Pages actions. The
+workflow skips deployment when it runs from `sqrzl/website`, preventing a
+second copy at `/website/`.

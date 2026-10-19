@@ -16,7 +16,9 @@
   "dependencies": {
     "@askrjs/askr": "^0.5.0",
     "@askrjs/logos": "^0.5.0",
-    "@askrjs/lucide": "^0.5.0"
+    "@askrjs/lucide": "^0.5.0",
+    "@askrjs/themes": "^0.5.0",
+    "@askrjs/ui": "^0.5.0"
   },
   "devDependencies": {
     "@askrjs/cli": "^0.5.0",

@@ -1,3 +1,5 @@
+import { PageHeader } from '@askrjs/themes/page-header';
+
 import { DocsSidebar } from './docs-sidebar';
 
 type DocsLayoutProps = {
@@ -17,10 +19,11 @@ export function DocsLayout({
     <div class="docs-layout page-container">
       <DocsSidebar current={current} />
       <article class="docs-article">
-        <header class="docs-page-header">
-          <h1>{title}</h1>
-          <p>{description}</p>
-        </header>
+        <PageHeader
+          className="docs-page-header"
+          title={title}
+          description={description}
+        />
         {children}
       </article>
     </div>

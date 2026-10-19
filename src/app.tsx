@@ -1,3 +1,5 @@
+import { Main } from '@askrjs/themes/components';
+
 import { SiteFooter } from './components/site-footer';
 import { SiteHeader } from './components/site-header';
 
@@ -6,9 +8,9 @@ export default function App({ children }: { children?: unknown }) {
     <div class="site-shell">
       <SiteHeader />
 
-      <main id="content" class="main-content">
+      <Main id="content" className="main-content">
         {children}
-      </main>
+      </Main>
 
       <SiteFooter />
     </div>

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import type { DocumentRenderArgs } from '@askrjs/askr/ssg';
+import { withThemeStyles } from '@askrjs/themes/ssr';
 
 import { registry } from './src/routes';
 
@@ -166,7 +167,7 @@ export const staticConfig = {
       url: route.path === '/' ? '/' : `${route.path}/`,
     }),
   },
-  document: renderDocument,
+  document: withThemeStyles(renderDocument),
   assets: [
     { from: resolve(clientOutputDir, 'assets'), to: 'assets' },
     { from: resolve(clientOutputDir, 'docs'), to: 'docs' },

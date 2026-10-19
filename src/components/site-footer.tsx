@@ -1,10 +1,22 @@
 import { GitHubLogo } from '@askrjs/logos';
+import { Footer, FooterLink } from '@askrjs/themes/components';
 
 export function SiteFooter() {
   return (
-    <footer class="site-footer">
+    <Footer className="site-footer">
       <div class="site-footer-inner page-container">
-        <span>Sqrzl Emulator</span>
+        <div class="site-footer-credit">
+          <span>Sqrzl Emulator</span>
+          <span aria-hidden="true">·</span>
+          <FooterLink
+            href="https://github.com/askrjs/askr"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Askr on GitHub"
+          >
+            Built with Askr
+          </FooterLink>
+        </div>
         <a
           class="icon-link"
           href="https://github.com/sqrzl/sqrzl-emulator"
@@ -15,6 +27,6 @@ export function SiteFooter() {
           <GitHubLogo size={18} aria-hidden="true" />
         </a>
       </div>
-    </footer>
+    </Footer>
   );
 }

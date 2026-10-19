@@ -1,5 +1,6 @@
 import { GitHubLogo } from '@askrjs/logos';
 import { BookOpenIcon } from '@askrjs/lucide';
+import { Header, NavBrand, NavGroup, Navbar } from '@askrjs/themes/components';
 import { Image, image } from '@askrjs/vite/image';
 
 const sqrzlLogo = image(new URL('../assets/sqrzl-logo.png', import.meta.url), {
@@ -13,19 +14,19 @@ export function SiteHeader() {
       <a class="skip-link" href="#content">
         Skip to content
       </a>
-      <header class="site-header">
-        <div class="site-header-inner page-container">
-          <a class="brand" href="/" aria-label="Sqrzl home">
-            <Image
-              image={sqrzlLogo}
-              class="brand-logo"
-              sizes="32px"
-              alt=""
-            />
-            <span class="brand-name">Sqrzl</span>
-            <span class="brand-description">Local service emulator</span>
-          </a>
-          <nav aria-label="Main navigation">
+      <Header className="site-header">
+        <Navbar
+          className="site-header-inner page-container"
+          aria-label="Main navigation"
+        >
+          <NavBrand>
+            <a class="brand" href="/" aria-label="Sqrzl home">
+              <Image image={sqrzlLogo} class="brand-logo" sizes="32px" alt="" />
+              <span class="brand-name">Sqrzl</span>
+              <span class="brand-description">Local service emulator</span>
+            </a>
+          </NavBrand>
+          <NavGroup align="end">
             <a class="icon-link" href="/docs/" aria-label="Documentation">
               <BookOpenIcon size={18} aria-hidden="true" />
             </a>
@@ -38,9 +39,9 @@ export function SiteHeader() {
             >
               <GitHubLogo size={18} aria-hidden="true" />
             </a>
-          </nav>
-        </div>
-      </header>
+          </NavGroup>
+        </Navbar>
+      </Header>
     </>
   );
 }
