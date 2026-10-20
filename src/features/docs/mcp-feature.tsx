@@ -128,8 +128,8 @@ export default function McpDocsFeature() {
         <p>
           Sqrzl does not issue OAuth tokens. It validates bearer tokens against
           the configured JWKS and checks token expiration, issuer, audience,
-          and the scope needed for each read, write, or repository task. The
-          authorization server must issue tokens for the exact resource URL.
+          and the scope needed for each read or write. The authorization server
+          must issue tokens for the exact resource URL.
         </p>
         <table>
           <thead>
@@ -150,12 +150,6 @@ export default function McpDocsFeature() {
                 <code>sqrzl:write</code>
               </td>
               <td>Tools that create, update, simulate, or delete data.</td>
-            </tr>
-            <tr>
-              <td>
-                <code>sqrzl:task</code>
-              </td>
-              <td>Enabled repository inspection tasks.</td>
             </tr>
           </tbody>
         </table>
@@ -201,28 +195,6 @@ export default function McpDocsFeature() {
         </p>
       </DocSection>
 
-      <DocSection title="Optional repository tasks">
-        <p>
-          Repository inspection tools are hidden unless enabled. Sqrzl accepts
-          only the fixed, read-only tasks <code>git_status</code> and{' '}
-          <code>git_diff_stat</code>; it does not accept arbitrary commands.
-          Configure the task scope and working directory explicitly:
-        </p>
-        <pre>
-          <code>
-            {
-              'SQRZL_MCP_REPOSITORY_TASKS=git_status,git_diff_stat\nSQRZL_MCP_REPOSITORY_PATH=/workspace/project'
-            }
-          </code>
-        </pre>
-        <p>
-          This enables the <code>repository_task_run</code> tool, which requires{' '}
-          <code>sqrzl:task</code> in protected mode. Each task stops after five
-          seconds and returns at most 16 KiB of combined output. Leave the task
-          list empty unless an MCP client needs repository status or diff
-          summaries.
-        </p>
-      </DocSection>
     </DocsLayout>
   );
 }
