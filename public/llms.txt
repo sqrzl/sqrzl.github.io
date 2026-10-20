@@ -7,6 +7,7 @@ Start with the quickstart. The HTTP API listens on port 9000, the admin UI on po
 ## Getting started
 
 - [Quickstart](https://sqrzl.github.io/docs/quick-start/): Start Sqrzl with Docker Compose and check readiness.
+- [MCP integration](https://sqrzl.github.io/docs/mcp/): Connect with Streamable HTTP, discover tools and resources, and configure OAuth or optional repository tasks.
 - [Configuration](https://sqrzl.github.io/docs/configuration/): Configure authentication, ports, storage, and request limits.
 - [Data and reset](https://sqrzl.github.io/docs/persistence/): Keep or reset local emulator data.
 

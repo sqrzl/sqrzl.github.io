@@ -28,6 +28,11 @@ const routeMetadata: Record<
     title: 'Quickstart | Sqrzl Emulator',
     description: 'Start Sqrzl with Docker Compose and check the local services.',
   },
+  '/docs/mcp': {
+    title: 'Model Context Protocol | Sqrzl Emulator',
+    description:
+      'Connect MCP clients to Sqrzl over Streamable HTTP, discover tools and resources, and configure OAuth.',
+  },
   '/docs/s3': {
     title: 'S3 | Sqrzl Emulator',
     description: 'Connect an S3-compatible client to the Sqrzl emulator.',
