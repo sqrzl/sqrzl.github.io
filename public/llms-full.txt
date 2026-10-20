@@ -1,0 +1,758 @@
+# Sqrzl full documentation
+
+> Full text of the Sqrzl website documentation, including the MCP integration guide.
+> For a concise directory, see https://sqrzl.github.io/llms.txt.
+
+---
+
+Source: https://sqrzl.github.io/docs/quick-start/
+
+# Quickstart
+
+
+Run the emulator with Docker Compose and check that the services are ready.
+
+
+## Start Sqrzl
+
+
+Run these commands in a terminal:
+
+
+```text
+git clone https://github.com/sqrzl/sqrzl-emulator.git
+cd sqrzl-emulator
+docker compose up --build
+```
+
+
+The first build can take a few minutes. Leave Compose running while you use the emulator.
+
+
+## Open a service
+
+
+| Service | Address |
+| --- | --- |
+
+| Storage APIs | `http://localhost:9000` |
+| Admin UI | `http://localhost:9001` |
+| SMTP capture | `localhost:2525` |
+| API health | `http://localhost:9000/healthz` |
+
+
+The checked-in Compose file enables authentication. Sign in to the admin UI with:
+
+
+**Username or access key**: `admin`
+
+**Password or secret key**: `sqrzl-secret`
+
+
+## Check readiness
+
+
+```text
+curl --fail http://localhost:9000/healthz
+docker compose ps
+```
+
+
+A healthy API returns `200 OK`. To inspect startup or request logs, run:
+
+
+```text
+docker compose logs --follow sqrzl
+```
+
+
+## Stop Sqrzl
+
+
+```text
+docker compose down
+```
+
+
+This stops the container and keeps the named storage volume. See [Data and reset](https://sqrzl.github.io/docs/persistence/) before deleting stored data.
+
+---
+
+Source: https://sqrzl.github.io/docs/mcp/
+
+# Connect an MCP client
+
+
+Use Sqrzl's standard Model Context Protocol server over Streamable HTTP.
+
+
+## Connect to Sqrzl
+
+
+**Endpoint**: `http://localhost:9001/mcp`
+
+**Transport**: Streamable HTTP
+
+**Capabilities**: Tools and resources
+
+
+The MCP endpoint shares the UI and admin listener. Its default port is `9001` (`SQRZL_UI_PORT`); the provider storage endpoint on `9000` is separate. If you map a different host port, use that port in the MCP URL. Connect with an MCP client that supports Streamable HTTP; Sqrzl does not require a separate MCP process or a custom protocol.
+
+
+## Tools
+
+
+Use the MCP client's tool discovery to see the schemas available from the running Sqrzl version. The tool set covers:
+
+
+- Buckets, lifecycle rules, policies, ACLs, and versioning, including `bucket_list` and `bucket_create`.
+
+- Object listing, content, metadata, tags, ACLs, versions, copy, delete, and multipart uploads. Binary content uses base64 fields, such as `object_content_get` and `object_content_put`.
+
+- Captured email and simulated text messages, including `mail_send_simulate`, `text_send_simulate`, inbound-message simulation, and delivery transitions.
+
+- Usage diagnostics through `usage_query`.
+
+
+Tool calls use the same emulator services and stores as the admin UI and admin HTTP API, so changes and captured messages are visible there too. Email tools capture messages and text tools simulate delivery; neither sends to real recipients. Read tools use `sqrzl:read`; changes use `sqrzl:write` when OAuth is enabled.
+
+
+## Resources and metrics
+
+
+| Resource or endpoint | Purpose |
+| --- | --- |
+
+| `sqrzl://health` | Read the emulator health status as JSON. |
+| `sqrzl://usage` | Read process-local usage rows for provider, bucket, client, operation, byte, and list activity. |
+| `/metrics` | Export Prometheus text for request counts, bytes, request-size histograms, and list activity. |
+
+
+The usage resource and `usage_query` accept `min_requests` and `min_bytes` thresholds. The Prometheus endpoint accepts `?min_requests=N`. Counters are held in memory and reset when Sqrzl restarts. When admin session auth is enabled, `/metrics` uses that admin session.
+
+
+## Authentication
+
+
+MCP is open when provider authentication is off and `SQRZL_MCP_AUTH_ENABLED` is false. The checked-in Compose setup sets `admin` and `sqrzl-secret`, which protect MCP too; those credentials are not OAuth bearer tokens, and Compose does not configure OAuth by default. Add the OAuth settings below before using protected MCP, or remove both generic access-key variables for a local open session. Removing them also opens provider and admin APIs, so keep that listener bound to loopback.
+
+
+Sqrzl does not issue OAuth tokens. It validates bearer tokens against the configured JWKS and checks token expiration, issuer, audience, and the scope needed for each read or write. The authorization server must issue tokens for the exact resource URL.
+
+
+| Scope | Access |
+| --- | --- |
+
+| `sqrzl:read` | Read tools and MCP resources. |
+| `sqrzl:write` | Tools that create, update, simulate, or delete data. |
+
+
+When OAuth protection is configured, resource metadata is available at `/.well-known/oauth-protected-resource/mcp`. MCP clients send their token in the `Authorization: Bearer` header; admin UI/API cookie sessions remain separate.
+
+
+## OAuth configuration
+
+
+Set all five resource-server values. The URLs below are examples; replace them with your authorization server's real endpoints and claims.
+
+
+```text
+SQRZL_MCP_AUTH_ENABLED=true
+SQRZL_MCP_RESOURCE_URL=https://sqrzl.example/mcp
+SQRZL_MCP_AUTHORIZATION_SERVER=https://auth.example
+SQRZL_MCP_ISSUER=https://auth.example/
+SQRZL_MCP_AUDIENCE=https://sqrzl.example/mcp
+SQRZL_MCP_JWKS_URL=https://auth.example/.well-known/jwks.json
+```
+
+
+`SQRZL_MCP_RESOURCE_URL` must be an absolute URL whose path is exactly `/mcp`. The resource and authorization-server URLs can use HTTP for local development; the JWKS URL must use HTTPS. The configured issuer and audience must exactly match the access token claims. See [Configuration](https://sqrzl.github.io/docs/configuration/) for other runtime settings.
+
+
+## Browser origins and host names
+
+
+The MCP transport accepts loopback hosts by default. Add public HTTP Host values with `SQRZL_MCP_ALLOWED_HOSTS` when using a reverse proxy. Browser clients must use an allowed origin; the defaults are the local UI origins. Add origins with `SQRZL_MCP_ALLOWED_ORIGINS`. Non-browser MCP clients that omit the `Origin` header are allowed.
+
+---
+
+Source: https://sqrzl.github.io/docs/s3/
+
+# Connect an S3 client
+
+
+Point an S3-compatible SDK at Sqrzl's local API endpoint.
+
+
+## Connection settings
+
+
+**Endpoint**: `http://localhost:9000`
+
+**Region**: `us-east-1`
+
+**Signature**: AWS Signature Version 4
+
+**Addressing**: Path style
+
+
+With the default Compose authentication, use `admin` and `sqrzl-secret` as the access key and secret. If authentication is disabled, SDK placeholder credentials are accepted.
+
+
+## Python example
+
+
+Install boto3, then create a bucket and write an object:
+
+
+```text
+import boto3
+from botocore.config import Config
+
+s3 = boto3.client(
+    "s3",
+    endpoint_url="http://localhost:9000",
+    aws_access_key_id="admin",
+    aws_secret_access_key="sqrzl-secret",
+    region_name="us-east-1",
+    config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
+)
+
+s3.create_bucket(Bucket="example-bucket")
+s3.put_object(Bucket="example-bucket", Key="hello.txt", Body=b"hello")
+```
+
+
+## Large uploads
+
+
+Sqrzl supports S3 multipart upload within the documented compatibility limits. The default request body limit is 128 MiB per request, so use parts below that size or raise `SQRZL_MAX_REQUEST_BYTES`.
+
+
+Check the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/) for supported S3 operations.
+
+---
+
+Source: https://sqrzl.github.io/docs/azure-blob/
+
+# Connect Azure Blob Storage
+
+
+Use the local account URL with an Azure Blob Storage SDK.
+
+
+## Connection settings
+
+
+**Account URL**: `http://localhost:9000/devstoreaccount1`
+
+**Container**: Use a valid Azure container name.
+
+**Authentication**: Shared Key or SAS when configured; anonymous access when auth is disabled.
+
+
+The default Compose credentials enable authentication. This anonymous example expects an open local instance. See [Configuration](https://sqrzl.github.io/docs/configuration/) to turn off authentication or set provider credentials.
+
+
+## Python example
+
+
+```text
+from azure.storage.blob import BlobServiceClient
+
+service = BlobServiceClient(
+    account_url="http://localhost:9000/devstoreaccount1",
+    credential=None,
+)
+container = service.create_container("example-container")
+container.upload_blob("hello.txt", b"hello")
+```
+
+
+## Account credentials
+
+
+Set `AZURE_ACCOUNT` and `AZURE_ACCOUNT_KEY` together to use Azure-specific credentials. If they are unset, Sqrzl can use the generic `SQRZL_ACCESS_KEY_ID` and `SQRZL_SECRET_ACCESS_KEY` values.
+
+
+Supported operations and limits are listed in the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/).
+
+---
+
+Source: https://sqrzl.github.io/docs/gcs/
+
+# Connect Google Cloud Storage
+
+
+Use the GCS JSON API endpoint and anonymous credentials for an open local instance.
+
+
+## Connection settings
+
+
+**JSON API endpoint**: `http://localhost:9000`
+
+**Credentials**: Anonymous when Sqrzl authentication is disabled.
+
+
+The default Compose configuration enables authentication. To use this example, disable it as described in [Configuration](https://sqrzl.github.io/docs/configuration/).
+
+
+## Python example
+
+
+```text
+from google.auth.credentials import AnonymousCredentials
+from google.cloud import storage
+
+gcs = storage.Client(
+    project="sqrzl",
+    credentials=AnonymousCredentials(),
+    client_options={"api_endpoint": "http://localhost:9000"},
+)
+bucket = gcs.bucket("example-bucket")
+bucket.create()
+bucket.blob("hello.txt").upload_from_string("hello")
+```
+
+
+## XML API
+
+
+Raw XML API requests use `http://localhost:9000/<bucket>/<object>` and send `Host: storage.googleapis.com`. For signed requests, configure the GCS HMAC access ID and secret.
+
+
+See the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/) for the supported JSON and XML operations.
+
+---
+
+Source: https://sqrzl.github.io/docs/oci/
+
+# Connect OCI Object Storage
+
+
+Configure an OCI client to use Sqrzl's local Object Storage endpoint.
+
+
+## Connection settings
+
+
+**Endpoint**: `http://localhost:9000`
+
+**Namespace**: `sqrzl-emulator`
+
+**Bucket path**: `/n/sqrzl-emulator/b/<bucket>/...`
+
+**Signing**: OCI native RSA-SHA256 request signing when authentication is configured.
+
+
+## Configure OCI authentication
+
+
+Set all four variables together: `OCI_TENANCY_OCID`, `OCI_USER_OCID`, `OCI_KEY_FINGERPRINT`, and `OCI_PUBLIC_KEY_PATH`. The public key path must be readable inside the emulator container.
+
+
+For local clients, set the endpoint to `http://localhost:9000` and use namespace `sqrzl-emulator`. Check the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/) for supported Object Storage calls.
+
+---
+
+Source: https://sqrzl.github.io/docs/configuration/
+
+# Configuration
+
+
+Set the few runtime options most local setups need in Compose.
+
+
+## Authentication
+
+
+The checked-in Compose setup enables provider and admin authentication with `admin` and `sqrzl-secret`. Change these values before sharing a local environment.
+
+
+For an open development instance, remove `SQRZL_ACCESS_KEY_ID` and `SQRZL_SECRET_ACCESS_KEY` from the service environment. Authentication is enabled only when both are set. Provider-specific settings can override the generic credentials.
+
+
+Set `SQRZL_ADMIN_AUTH_DISABLED=true` to leave the UI and admin API open while keeping provider API authentication enabled.
+
+
+MCP uses the same listener but has its own OAuth bearer-token flow when protected. See [MCP configuration](https://sqrzl.github.io/docs/mcp/) before connecting an MCP client to an authenticated instance.
+
+
+## Common settings
+
+
+| Variable | Purpose |
+| --- | --- |
+
+| `SQRZL_BLOBS_PATH` | Storage root. Use `/app/blobs` with the Compose volume. |
+| `SQRZL_MAX_REQUEST_BYTES` | Maximum size for one HTTP request body or SMTP DATA payload; default is 128 MiB. |
+| `SQRZL_BUCKET_LIST` | Comma-separated buckets created at startup. |
+| `SQRZL_LOG_FORMAT` | `text` or `json`; default is `text`. |
+| `SQRZL_API_PORT` | Storage API listener; default is `9000`. |
+| `SQRZL_UI_PORT` | Admin UI listener; default is `9001`. |
+| `SQRZL_SMTP_PORT` | SMTP capture listener; default is `2525`. |
+
+
+Docker port mappings are written `HOST:CONTAINER`. To use host port `19000` for the API, map `19000:9000` and keep the container port unchanged.
+
+
+## Provider credentials
+
+
+- Azure overrides: `AZURE_ACCOUNT` and `AZURE_ACCOUNT_KEY`.
+
+- GCS HMAC: `GCS_HMAC_ACCESS_ID` and `GCS_HMAC_SECRET`.
+
+- OCI signing: set all four `OCI_*` identity and public-key variables.
+
+
+Provider credential pairs must be configured together. See [S3](https://sqrzl.github.io/docs/s3/), [Azure](https://sqrzl.github.io/docs/azure-blob/), [GCS](https://sqrzl.github.io/docs/gcs/), or [OCI](https://sqrzl.github.io/docs/oci/) for client setup.
+
+---
+
+Source: https://sqrzl.github.io/docs/persistence/
+
+# Data and reset
+
+
+Keep local storage between runs, or remove a disposable volume when you want a clean start.
+
+
+## Keep data between runs
+
+
+The Compose setup mounts a named volume at `/app/blobs`. Stop Sqrzl with:
+
+
+```text
+docker compose down
+```
+
+
+The container stops and the volume stays in place. Start it again with `docker compose up` to use the same stored objects.
+
+
+## Reset a disposable volume
+
+
+This removes Compose-managed volumes, including Sqrzl's stored objects:
+
+
+```text
+docker compose down --volumes
+docker compose up --build
+```
+
+
+Only use this for data you are ready to delete. If you use a bind mount, back up or clear its host directory yourself.
+
+
+## Storage root rules
+
+
+Mount persistent storage at `SQRZL_BLOBS_PATH`. Sqrzl initializes an empty root with its storage format marker and refuses to start if a nonempty root has no marker. It does not migrate or delete older data automatically.
+
+
+Run one emulator writer per storage root. Sqrzl holds an exclusive writer lock while it is running.
+
+---
+
+Source: https://sqrzl.github.io/docs/email.md
+
+# Email with Sqrzl
+
+Sqrzl captures outbound mail locally for development and CI. It does not relay mail or deliver it to real inboxes. Start the [quickstart](https://sqrzl.github.io/docs/quick-start/) before connecting an SDK.
+
+## Endpoints
+
+| Transport | Endpoint | Supported surface |
+| --- | --- | --- |
+| SMTP | `localhost:2525` | Plaintext SMTP subset |
+| SendGrid | `http://localhost:9000` | `POST /v3/mail/send`, selected v3 Mail Send fields |
+| Amazon SES v2 | `http://localhost:9000` | `SendEmail` with `Content.Simple` |
+| Azure Communication Services Email | `http://localhost:9000` | `POST /emails:send`, operation polling |
+
+The HTTP adapters share the storage API listener.
+
+## SMTP example
+
+```python
+import smtplib
+from email.message import EmailMessage
+
+message = EmailMessage()
+message["From"] = "sender@example.com"
+message["To"] = "recipient@example.com"
+message["Subject"] = "Local Sqrzl test"
+message.set_content("This message is captured locally.")
+
+with smtplib.SMTP("127.0.0.1", 2525, timeout=5) as client:
+    client.send_message(message)
+```
+
+SMTP supports plaintext EHLO/HELO, strict angle-bracket MAIL FROM and RCPT TO paths (including the null reverse path), DATA, RSET, NOOP, and QUIT. Recipient fan-out is validated and captured atomically. AUTH, STARTTLS, relay/delivery, DSN semantics, and other extensions are unsupported.
+
+## Request and capture limits
+
+`SQRZL_MAX_REQUEST_BYTES` defaults to 128 MiB per HTTP request body or SMTP `DATA` payload. Separately, each capture transaction has a conservative 64 MiB projected aggregate materialization limit, including fan-out copies, raw MIME, attachments, and stored records. Oversized HTTP requests receive provider-shaped `413` responses; SMTP returns `552`. Rejected requests do not leave partial mailbox captures. See [configuration](https://sqrzl.github.io/docs/configuration/) for the request-body limit.
+
+## Provider API limits
+
+- **SendGrid:** selected personalizations, to/cc/bcc recipients, plain and HTML content, headers, reply-to fields, and base64 attachments. Recipient limits and a total request size below 30 MB are enforced. Templates, scheduling, tracking/settings, categories, sandbox delivery, and other unsupported fields are rejected.
+- **SES v2:** `Content.Simple`, destinations, reply-to addresses, subject/body charset metadata, and selected custom headers. Raw and template content, attachments, tags, configuration sets, and other top-level options are rejected. SigV4 is validated for the local endpoint.
+- **ACS Email:** API versions `2023-03-01`, `2023-03-31`, and `2025-09-01`; up to 50 combined to/cc/bcc recipients; plain or HTML content; headers; reply-to; tracking control; and base64 regular/inline attachments up to 10 MB. Operation IDs and five-minute repeatability are supported.
+
+See the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/) for exact accepted request fields and rejected variants.
+
+## Authentication and inspection
+
+The checked-in Compose configuration uses `admin` / `sqrzl-secret` for shared provider and admin authentication. Set both `SQRZL_ACCESS_KEY_ID` and `SQRZL_SECRET_ACCESS_KEY` to enable it. `SQRZL_SENDGRID_API_KEY` enables SendGrid bearer authentication when set. `SQRZL_ACS_CONNECTION_STRING` uses `endpoint=<url>;accesskey=<base64>` to enable ACS HMAC authentication. SMTP has no authentication.
+
+Open `http://localhost:9001` and choose **Mailboxes** to inspect captured message content, headers, and supported attachments. A successful adapter response confirms local capture, not remote delivery. See [configuration](https://sqrzl.github.io/docs/configuration/) for runtime settings.
+
+## SDK examples
+
+### SendGrid
+
+```python
+import sendgrid
+from sendgrid.helpers.mail import Mail
+
+client = sendgrid.SendGridAPIClient(api_key="local-key")
+client.client.host = "http://localhost:9000"
+message = Mail(
+    from_email="sender@example.com",
+    to_emails="recipient@example.com",
+    subject="Local Sqrzl test",
+    plain_text_content="This message is captured locally.",
+)
+response = client.send(message)
+```
+
+### Amazon SES v2
+
+```python
+import boto3
+from botocore.config import Config
+
+client = boto3.client(
+    "sesv2",
+    endpoint_url="http://localhost:9000",
+    aws_access_key_id="admin",
+    aws_secret_access_key="sqrzl-secret",
+    region_name="us-east-1",
+    config=Config(signature_version="s3v4"),
+)
+client.send_email(
+    FromEmailAddress="sender@example.com",
+    Destination={"ToAddresses": ["recipient@example.com"]},
+    Content={"Simple": {
+        "Subject": {"Data": "Local Sqrzl test"},
+        "Body": {"Text": {"Data": "This message is captured locally."}},
+    }},
+)
+```
+
+### Azure Communication Services Email
+
+The SDK defaults its normalized connection-string endpoint to HTTPS. The local emulator serves HTTP, so use a transport that rewrites the URL after the SDK's HMAC policy signs it.
+
+```python
+import base64
+from azure.communication.email import EmailClient
+from azure.core.pipeline.transport import RequestsTransport
+
+class LocalHttpTransport(RequestsTransport):
+    def send(self, request, **kwargs):
+        if request.url.startswith("https://"):
+            request.url = "http://" + request.url.removeprefix("https://")
+        return super().send(request, **kwargs)
+
+access_key = base64.b64encode(b"shared-secret").decode("ascii")
+connection = "endpoint=http://localhost:9000;accesskey=" + access_key
+client = EmailClient.from_connection_string(
+    connection,
+    transport=LocalHttpTransport(),
+)
+poller = client.begin_send({
+    "senderAddress": "sender@example.com",
+    "recipients": {"to": [{"address": "recipient@example.com"}]},
+    "content": {
+        "subject": "Local Sqrzl test",
+        "plainText": "This message is captured locally.",
+    },
+})
+poller.result(timeout=10)
+```
+
+Configure `SQRZL_ACS_CONNECTION_STRING` on Sqrzl with the same access key.
+
+---
+
+Source: https://sqrzl.github.io/docs/sms.md
+
+# SMS and MMS with Sqrzl
+
+Sqrzl captures outbound text requests locally, stores them for inspection, and lets you simulate inbound messages and delivery updates. It does not send messages through a carrier. Start the [quickstart](https://sqrzl.github.io/docs/quick-start/) first. SMS APIs use `http://localhost:9000`; the admin UI is at `http://localhost:9001`.
+
+## Provider endpoints
+
+| Provider | Local endpoint | Supported operation |
+| --- | --- | --- |
+| Twilio | `http://localhost:9000` | `POST /2010-04-01/Accounts/{AccountSid}/Messages.json` |
+| Amazon SNS | `http://localhost:9000` | Query API `Publish` with direct `PhoneNumber` |
+| AWS End User Messaging SMS Voice v2 | `http://localhost:9000` | `SendTextMessage`, `SendMediaMessage` |
+| Azure Communication Services SMS | `http://localhost:9000` | `POST /sms?api-version=...` |
+
+## SDK examples
+
+### Twilio
+
+```python
+import os
+import twilio
+
+client = twilio.Client(
+    os.environ["SQRZL_TWILIO_ACCOUNT_SID"],
+    os.environ["SQRZL_TWILIO_AUTH_TOKEN"],
+)
+client.api.base_url = "http://localhost:9000"
+message = client.messages.create(
+    to="+15550001001",
+    from_="+15550001000",
+    body="Local Sqrzl test",
+)
+```
+
+### Amazon SNS
+
+```python
+import boto3
+
+client = boto3.client(
+    "sns",
+    endpoint_url="http://localhost:9000",
+    aws_access_key_id="admin",
+    aws_secret_access_key="sqrzl-secret",
+    region_name="us-east-1",
+)
+client.publish(PhoneNumber="+15550001002", Message="Local Sqrzl test")
+```
+
+SNS supports raw SMS or `MessageStructure=json` selecting the `sms` value with `default` fallback, and up to 10 message attributes. Topic and target publishing, fan-out, subscriptions, and management APIs are unsupported.
+
+### AWS End User Messaging SMS Voice v2
+
+```python
+import boto3
+
+client = boto3.client(
+    "pinpoint-sms-voice-v2",
+    endpoint_url="http://localhost:9000",
+    aws_access_key_id="admin",
+    aws_secret_access_key="sqrzl-secret",
+    region_name="us-east-1",
+)
+client.send_text_message(
+    DestinationPhoneNumber="+15550001003",
+    OriginationIdentity="+15550001000",
+    MessageBody="Local Sqrzl test",
+    MessageType="TRANSACTIONAL",
+)
+```
+
+The adapter also supports `SendMediaMessage`, with exactly one optional S3 media URI, and `DryRun` validation without capture. Sqrzl stores the URI as a reference and never fetches it.
+
+### Azure Communication Services SMS
+
+The SDK defaults its normalized connection-string endpoint to HTTPS. The local emulator serves HTTP, so use a transport that rewrites the URL after the SDK's HMAC policy signs it.
+
+```python
+import base64
+from azure.communication.sms import SmsClient
+from azure.core.pipeline.transport import RequestsTransport
+
+class LocalHttpTransport(RequestsTransport):
+    def send(self, request, **kwargs):
+        if request.url.startswith("https://"):
+            request.url = "http://" + request.url.removeprefix("https://")
+        return super().send(request, **kwargs)
+
+access_key = base64.b64encode(b"shared-secret").decode("ascii")
+connection = "endpoint=http://localhost:9000;accesskey=" + access_key
+client = SmsClient.from_connection_string(
+    connection,
+    transport=LocalHttpTransport(),
+)
+client.send(
+    from_="+15550001000",
+    to=["+15550001004", "+15550001005"],
+    message="Local Sqrzl test",
+    enable_delivery_report=True,
+)
+```
+
+Configure `SQRZL_ACS_CONNECTION_STRING` on Sqrzl with the same access key.
+
+## Configure authentication
+
+- Set both `SQRZL_TWILIO_ACCOUNT_SID` and `SQRZL_TWILIO_AUTH_TOKEN` to require Twilio Basic authentication and sign its callbacks.
+- AWS adapters use `SQRZL_ACCESS_KEY_ID` and `SQRZL_SECRET_ACCESS_KEY` when generic provider authentication is enabled. The checked-in Compose defaults are `admin` and `sqrzl-secret`.
+- ACS SMS uses the shared key in `SQRZL_ACS_CONNECTION_STRING` (`endpoint=<url>;accesskey=<base64>`).
+
+See [configuration](https://sqrzl.github.io/docs/configuration/) for all runtime settings.
+
+## Inspect messages and simulate delivery
+
+Open `http://localhost:9001` and choose **Texts**. Search messages and conversations, inject an inbound message, change an outbound message to delivered or failed, configure callback destinations per provider and local number, inspect callback requests and bounded responses, and create linked retries.
+
+Delivery changes are explicit; there is no automatic delivery timer. Callback failures do not undo a captured message or terminal delivery state, and callback redirects are not followed.
+
+## Callback access and media
+
+Callback hosts default to `localhost`, `127.0.0.1`, and `::1`. Add comma-separated hosts with `SQRZL_TEXT_CALLBACK_ALLOWED_HOSTS`. The default callback timeout is 5000 ms; change it with `SQRZL_TEXT_CALLBACK_TIMEOUT_MS`. A Twilio `StatusCallback` URL must pass the same allowlist.
+
+Outbound Twilio media URLs and AWS S3 media URIs are stored as references; Sqrzl never fetches remote media. Inbound Twilio simulations can include base64 media, which is stored and served at authenticated Twilio-shaped media URLs. AWS inbound MMS and all ACS MMS requests are rejected.
+
+## Supported request scope
+
+- **Twilio:** `To`, `From` or `MessagingServiceSid`, optional body up to 1600 characters, up to 10 absolute HTTP(S) `MediaUrl` values, and an optional allowlisted `StatusCallback`. Service-selected senders initially return `accepted` with zero segments; explicit senders return `queued`.
+- **Amazon SNS:** direct E.164 `PhoneNumber` Publish only; up to 10 message attributes. Topic fan-out is unsupported.
+- **SMS Voice v2:** documented JSON fields for `SendTextMessage` and `SendMediaMessage`; `DryRun` validates without capture. Inbound MMS, voice operations, and RCS are unsupported.
+- **ACS SMS:** API versions `2021-03-07` and `2026-01-23`; 1–100 E.164 recipients; per-recipient repeatability results; delivery-report options, tags, and timeouts from 60 to 43200 seconds. Rejected recipients in mixed results are not captured. `messagingConnect` and MMS are unsupported.
+
+TwiML execution, WhatsApp, voice calls, automatic delivery timing, remote media fetching, and full provider management APIs are outside scope. See the [compatibility matrix](https://sqrzl.github.io/docs/compatibility/) for exact accepted fields and errors.
+
+## Request and capture limits
+
+`SQRZL_MAX_REQUEST_BYTES` defaults to 128 MiB per HTTP request body. Separately, each capture transaction has a conservative 64 MiB projected aggregate materialization limit, including message fan-out copies and inline media. Oversized requests receive provider-shaped `413` responses and create no partial captures. See [configuration](https://sqrzl.github.io/docs/configuration/) for the request-body limit.
+
+---
+
+Source: https://sqrzl.github.io/docs/compatibility/
+
+# Compatibility
+
+
+Sqrzl implements provider protocols within a published scope. Check that scope before relying on an operation.
+
+
+## Read the matrix
+
+
+The matrix lists supported services, operations, request variants, and known limits for each provider. It is the detailed reference for what Sqrzl currently accepts.
+
+
+Open the full compatibility matrix:
+
+[Sqrzl compatibility matrix](https://github.com/sqrzl/sqrzl-emulator/blob/main/compatibility-matrix.json)
+
+
+## What to expect
+
+
+Sqrzl follows each provider's HTTP or SMTP contract for the supported surface. An unsupported request variant is rejected instead of being silently treated as a different operation.
+
+
+Sqrzl is intended for development and CI. A passing local request does not certify production capacity or full parity with a cloud service.
