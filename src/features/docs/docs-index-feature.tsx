@@ -8,6 +8,12 @@ const guides = [
     description: 'Start Sqrzl with Docker Compose and check that it is ready.',
   },
   {
+    href: 'docs/mcp/',
+    title: 'Connect an MCP client',
+    description:
+      'Connect over Streamable HTTP and configure tools, resources, and OAuth.',
+  },
+  {
     href: 'docs/s3/',
     title: 'Connect an S3 client',
     description: 'Use the S3 endpoint, credentials, and a boto3 example.',

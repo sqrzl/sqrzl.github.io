@@ -22,6 +22,12 @@ const sections = [
     ],
   },
   {
+    title: 'Client integrations',
+    pages: [
+      { key: 'mcp', label: 'Model Context Protocol', href: 'docs/mcp/' },
+    ],
+  },
+  {
     title: 'Storage APIs',
     pages: [
       { key: 's3', label: 'Amazon S3', href: 'docs/s3/' },

@@ -12,6 +12,7 @@ import ConfigurationDocsPage from './pages/docs/configuration';
 import DocsIndexPage from './pages/docs/index';
 import EmailDocsPage from './pages/docs/email';
 import EmailAndMessagingDocsPage from './pages/docs/email-and-messaging';
+import McpDocsPage from './pages/docs/mcp';
 import OciDocsPage from './pages/docs/oci';
 import PersistenceDocsPage from './pages/docs/persistence';
 import QuickStartDocsPage from './pages/docs/quick-start';
@@ -26,6 +27,7 @@ export const registry = createRouteRegistry(() => {
     route('/', HomePage);
     route('/docs', DocsIndexPage);
     route('/docs/quick-start', QuickStartDocsPage);
+    route('/docs/mcp', McpDocsPage);
     route('/docs/s3', S3DocsPage);
     route('/docs/azure-blob', AzureBlobDocsPage);
     route('/docs/gcs', GcsDocsPage);

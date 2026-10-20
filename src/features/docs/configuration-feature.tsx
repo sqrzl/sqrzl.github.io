@@ -25,6 +25,11 @@ export default function ConfigurationDocsFeature() {
           Set <code>SQRZL_ADMIN_AUTH_DISABLED=true</code> to leave the UI and
           admin API open while keeping provider API authentication enabled.
         </p>
+        <p>
+          MCP uses the same listener but has its own OAuth bearer-token flow
+          when protected. See <a href="docs/mcp/">MCP configuration</a> before
+          connecting an MCP client to an authenticated instance.
+        </p>
       </DocSection>
 
       <DocSection title="Common settings">
