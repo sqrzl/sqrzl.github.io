@@ -4,6 +4,8 @@
 
 Start with the quickstart. The HTTP API listens on port 9000, the admin UI on port 9001, and SMTP on port 2525. Provider support is intentionally partial; check the compatibility matrix before relying on an operation or field.
 
+For the complete documentation content in one file, see [full text documentation](https://sqrzl.github.io/llms-full.txt).
+
 ## Getting started
 
 - [Quickstart](https://sqrzl.github.io/docs/quick-start/): Start Sqrzl with Docker Compose and check readiness.

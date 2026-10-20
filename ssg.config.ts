@@ -178,5 +178,6 @@ export const staticConfig = {
     { from: resolve(clientOutputDir, 'docs'), to: 'docs' },
     { from: resolve(clientOutputDir, '404.html') },
     { from: resolve(clientOutputDir, 'llms.txt') },
+    { from: resolve(clientOutputDir, 'llms-full.txt') },
   ],
 };
