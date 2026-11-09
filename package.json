@@ -21,7 +21,7 @@
     "@askrjs/ui": "^0.5.0"
   },
   "devDependencies": {
-    "@askrjs/cli": "^0.5.0",
+    "@askrjs/cli": "^0.5.1",
     "@askrjs/vite": ">=0.5.0 <0.6.0",
     "@types/node": "^26.6.5",
     "sharp": "^0.35.5",
