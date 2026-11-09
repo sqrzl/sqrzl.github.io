@@ -14,7 +14,7 @@
     "fmt": "vp fmt ."
   },
   "dependencies": {
-    "@askrjs/askr": "^0.5.0",
+    "@askrjs/askr": "^0.5.1",
     "@askrjs/logos": "^0.5.0",
     "@askrjs/lucide": "^0.5.0",
     "@askrjs/themes": "^0.5.0",
