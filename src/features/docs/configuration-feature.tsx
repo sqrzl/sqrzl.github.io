@@ -119,38 +119,123 @@ export default function ConfigurationDocsFeature() {
         </p>
       </DocSection>
       <DocSection title="Provider settings">
-        <ul>
-          <li>
-            Azure overrides: <code>AZURE_ACCOUNT</code> and{' '}
-            <code>AZURE_ACCOUNT_KEY</code>.
-          </li>
-          <li>
-            GCS HMAC: <code>GCS_HMAC_ACCESS_ID</code> and{' '}
-            <code>GCS_HMAC_SECRET</code>.
-          </li>
-          <li>
-            OCI signing: set all four <code>OCI_*</code> identity and public-key
-            variables.
-          </li>
-        </ul>
-        <ul>
-          <li>
-            SendGrid uses <code>SENDGRID_API_KEY</code>.
-          </li>
-          <li>
-            Twilio uses <code>TWILIO_ACCOUNT_SID</code> and{' '}
-            <code>TWILIO_AUTH_TOKEN</code>, with optional{' '}
-            <code>TWILIO_API_KEY_SID</code> and{' '}
-            <code>TWILIO_API_KEY_SECRET</code> configured together.
-          </li>
-          <li>
-            ACS Email and SMS use <code>ACS_CONNECTION_STRING</code>.
-          </li>
-          <li>
-            SES configuration-set restrictions use{' '}
-            <code>SES_CONFIGURATION_SETS</code>.
-          </li>
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>AZURE_ACCOUNT</code>
+              </td>
+              <td>
+                Azure storage account override; configure with
+                AZURE_ACCOUNT_KEY.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>AZURE_ACCOUNT_KEY</code>
+              </td>
+              <td>Azure storage account key; configure with AZURE_ACCOUNT.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>GCS_HMAC_ACCESS_ID</code>
+              </td>
+              <td>GCS HMAC access ID; configure with GCS_HMAC_SECRET.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>GCS_HMAC_SECRET</code>
+              </td>
+              <td>GCS HMAC secret; configure with GCS_HMAC_ACCESS_ID.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>OCI_TENANCY_OCID</code>
+              </td>
+              <td>
+                OCI tenancy OCID; configure all four OCI signing variables
+                together.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>OCI_USER_OCID</code>
+              </td>
+              <td>OCI user OCID for request signing.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>OCI_KEY_FINGERPRINT</code>
+              </td>
+              <td>OCI signing key fingerprint.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>OCI_PUBLIC_KEY_PATH</code>
+              </td>
+              <td>Path to the OCI signing public key.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>SENDGRID_API_KEY</code>
+              </td>
+              <td>SendGrid API key.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>TWILIO_ACCOUNT_SID</code>
+              </td>
+              <td>Twilio account SID; configure with TWILIO_AUTH_TOKEN.</td>
+            </tr>
+            <tr>
+              <td>
+                <code>TWILIO_AUTH_TOKEN</code>
+              </td>
+              <td>
+                Twilio authentication token; configure with TWILIO_ACCOUNT_SID.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>TWILIO_API_KEY_SID</code>
+              </td>
+              <td>
+                Optional Twilio API key SID; configure with
+                TWILIO_API_KEY_SECRET.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>TWILIO_API_KEY_SECRET</code>
+              </td>
+              <td>
+                Optional Twilio API key secret; configure with
+                TWILIO_API_KEY_SID.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>ACS_CONNECTION_STRING</code>
+              </td>
+              <td>
+                Azure Communication Services connection string for email and
+                SMS.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>SES_CONFIGURATION_SETS</code>
+              </td>
+              <td>SES configuration-set restrictions.</td>
+            </tr>
+          </tbody>
+        </table>
         <p>
           Vendor settings use provider prefixes; <code>SQRZL_*</code> names
           configure the emulator and its local policy. The{' '}
