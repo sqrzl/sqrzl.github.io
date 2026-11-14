@@ -23,9 +23,7 @@ const sections = [
   },
   {
     title: 'Client integrations',
-    pages: [
-      { key: 'mcp', label: 'Model Context Protocol', href: 'docs/mcp/' },
-    ],
+    pages: [{ key: 'mcp', label: 'Model Context Protocol', href: 'docs/mcp/' }],
   },
   {
     title: 'Storage APIs',
@@ -48,7 +46,16 @@ const sections = [
         label: 'Configuration',
         href: 'docs/configuration/',
       },
-      { key: 'persistence', label: 'Data and reset', href: 'docs/persistence/' },
+      {
+        key: 'persistence',
+        label: 'Data and reset',
+        href: 'docs/persistence/',
+      },
+      {
+        key: 'runtime',
+        label: 'Runtime and diagnostics',
+        href: 'docs/runtime/',
+      },
     ],
   },
   {

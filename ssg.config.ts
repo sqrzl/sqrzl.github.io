@@ -10,10 +10,11 @@ const clientOutputDir = './dist/client';
 const outputDir = './dist/static';
 const siteUrl = 'https://sqrzl.github.io';
 
-const routeMetadata: Record<
-  string,
-  { title: string; description: string; markdown?: string }
-> = {
+const routeMetadata: Record<string, { title: string; description: string }> = {
+  '/404': {
+    title: 'Page not found | Sqrzl',
+    description: 'Return to the Sqrzl home page or documentation.',
+  },
   '/': {
     title: 'Sqrzl Emulator',
     description:
@@ -26,7 +27,8 @@ const routeMetadata: Record<
   },
   '/docs/quick-start': {
     title: 'Quickstart | Sqrzl Emulator',
-    description: 'Start Sqrzl with Docker Compose and check the local services.',
+    description:
+      'Start Sqrzl with Docker Compose and check the local services.',
   },
   '/docs/mcp': {
     title: 'Model Context Protocol | Sqrzl Emulator',
@@ -49,9 +51,15 @@ const routeMetadata: Record<
     title: 'OCI Object Storage | Sqrzl Emulator',
     description: 'Configure OCI Object Storage clients for the Sqrzl emulator.',
   },
+  '/docs/runtime': {
+    title: 'Runtime and diagnostics | Sqrzl Emulator',
+    description:
+      'Configure admission limits, graceful draining, readiness and metrics.',
+  },
   '/docs/configuration': {
     title: 'Configuration | Sqrzl Emulator',
-    description: 'Configure authentication, ports, storage, and request limits.',
+    description:
+      'Configure authentication, ports, storage, and request limits.',
   },
   '/docs/persistence': {
     title: 'Data and reset | Sqrzl Emulator',
@@ -61,13 +69,11 @@ const routeMetadata: Record<
     title: 'Email | Sqrzl Emulator',
     description:
       'Connect SMTP, SendGrid, Amazon SES v2, or Azure Communication Services Email and inspect captured messages.',
-    markdown: '/docs/email.md',
   },
   '/docs/sms': {
     title: 'SMS and MMS | Sqrzl Emulator',
     description:
       'Connect Twilio, Amazon SNS, AWS End User Messaging, or Azure Communication Services SMS and simulate delivery.',
-    markdown: '/docs/sms.md',
   },
   '/docs/email-and-messaging': {
     title: 'Email and messaging | Sqrzl Emulator',
@@ -75,7 +81,8 @@ const routeMetadata: Record<
   },
   '/docs/compatibility': {
     title: 'Compatibility | Sqrzl Emulator',
-    description: 'Review provider compatibility and supported Sqrzl operations.',
+    description:
+      'Review provider compatibility and supported Sqrzl operations.',
   },
 };
 
@@ -93,6 +100,7 @@ function escapeHtml(value: string) {
 }
 
 function baseHrefForRoute(pathname: string) {
+  if (pathname === '/404') return '/';
   const normalizedPath = pathname.replace(/^\/+|\/+$/g, '');
   const depth = normalizedPath ? normalizedPath.split('/').length : 0;
 
@@ -122,39 +130,41 @@ function renderDocument({ appHtml, context }: DocumentRenderArgs) {
     titlePattern,
     `<title>${escapeHtml(metadata.title)}</title>`
   );
-  documentHtml = documentHtml.replace(
-    descriptionPattern,
-    (match) => {
-      const canonicalUrl =
-        context.route.path === '/'
+  documentHtml = documentHtml.replace(descriptionPattern, (match) => {
+    const canonicalUrl =
+      context.route.path === '/404'
+        ? `${siteUrl}/404.html`
+        : context.route.path === '/'
           ? `${siteUrl}/`
           : `${siteUrl}${context.route.path.replace(/\/+$/, '')}/`;
-      const metadataTags = [
-        `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />`,
-        `<link rel="describedby" href="${siteUrl}/llms.txt" />`,
-        metadata.markdown
-          ? `<link rel="alternate" type="text/markdown" href="${siteUrl}${metadata.markdown}" />`
-          : '',
-        '<meta property="og:type" content="website" />',
-        `<meta property="og:site_name" content="Sqrzl" />`,
-        `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`,
-        `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`,
-        `<meta property="og:url" content="${escapeHtml(canonicalUrl)}" />`,
-        `<meta property="og:image" content="${siteUrl}/assets/sqrzl.png" />`,
-        '<meta property="og:image:alt" content="Sqrzl logo" />',
-        '<meta name="twitter:card" content="summary" />',
-        `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
-        `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`,
-      ]
-        .filter(Boolean)
-        .join('\n    ');
+    const metadataTags = [
+      context.route.path === '/404'
+        ? '<meta name="robots" content="noindex" />'
+        : `<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />`,
+      `<link rel="describedby" href="${siteUrl}/llms.txt" />`,
+      context.route.path === '/404'
+        ? ''
+        : `<link rel="alternate" type="text/markdown" href="${siteUrl}${context.route.path === '/' ? '/index.md' : context.route.path === '/docs' ? '/docs/index.md' : `${context.route.path}.md`}" />`,
+      '<meta property="og:type" content="website" />',
+      `<meta property="og:site_name" content="Sqrzl" />`,
+      `<meta property="og:title" content="${escapeHtml(metadata.title)}" />`,
+      `<meta property="og:description" content="${escapeHtml(metadata.description)}" />`,
+      `<meta property="og:url" content="${escapeHtml(canonicalUrl)}" />`,
+      `<meta property="og:image" content="${siteUrl}/assets/sqrzl.png" />`,
+      '<meta property="og:image:alt" content="Sqrzl logo" />',
+      '<meta name="twitter:card" content="summary" />',
+      `<meta name="twitter:title" content="${escapeHtml(metadata.title)}" />`,
+      `<meta name="twitter:description" content="${escapeHtml(metadata.description)}" />`,
+    ]
+      .filter(Boolean)
+      .join('\n    ');
 
-      return `${match}\n    ${metadataTags}`;
-    }
-  );
+    return `${match}\n    ${metadataTags}`;
+  });
   documentHtml = documentHtml.replace(
     titlePattern,
-    (match) => `${match}\n    <base href="${baseHrefForRoute(context.route.path)}" />`
+    (match) =>
+      `${match}\n    <base href="${baseHrefForRoute(context.route.path)}" />`
   );
 
   return documentHtml.replace(
@@ -168,16 +178,16 @@ export const staticConfig = {
   outputDir,
   siteUrl,
   sitemap: {
-    resolve: (route: { path: string }) => ({
-      url: route.path === '/' ? '/' : `${route.path}/`,
-    }),
+    resolve: (route: { path: string }) =>
+      route.path === '/404'
+        ? false
+        : {
+            url: route.path === '/' ? '/' : `${route.path}/`,
+          },
   },
   document: withThemeStyles(renderDocument),
   assets: [
     { from: resolve(clientOutputDir, 'assets'), to: 'assets' },
-    { from: resolve(clientOutputDir, 'docs'), to: 'docs' },
-    { from: resolve(clientOutputDir, '404.html') },
     { from: resolve(clientOutputDir, 'llms.txt') },
-    { from: resolve(clientOutputDir, 'llms-full.txt') },
   ],
 };

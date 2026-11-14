@@ -39,7 +39,9 @@ export default function EmailDocsFeature() {
               <td>
                 <code>http://localhost:9000</code>
               </td>
-              <td>SendGrid SDKs and requests to <code>/v3/mail/send</code>.</td>
+              <td>
+                SendGrid SDKs and requests to <code>/v3/mail/send</code>.
+              </td>
             </tr>
             <tr>
               <td>Amazon SES v2</td>
@@ -55,9 +57,7 @@ export default function EmailDocsFeature() {
               <td>
                 <code>http://localhost:9000</code>
               </td>
-              <td>
-                ACS Email send and operation polling.
-              </td>
+              <td>ACS Email send and operation polling.</td>
             </tr>
           </tbody>
         </table>
@@ -85,8 +85,8 @@ with smtplib.SMTP("127.0.0.1", 2525, timeout=5) as client:
           </code>
         </pre>
         <p>
-          SMTP is plaintext and accepts strict angle-bracket envelope paths.
-          Use a client that does not require SMTP AUTH or STARTTLS.
+          SMTP is plaintext and accepts strict angle-bracket envelope paths. Use
+          a client that does not require SMTP AUTH or STARTTLS.
         </p>
 
         <h3>SendGrid</h3>
@@ -107,9 +107,9 @@ response = client.send(message)`}
           </code>
         </pre>
         <p>
-          If <code>SQRZL_SENDGRID_API_KEY</code> is set on Sqrzl, pass the same
-          key to the SDK. If it is unset, the adapter does not require a
-          SendGrid bearer token.
+          If <code>SENDGRID_API_KEY</code> is set on Sqrzl, pass the same key to
+          the SDK. If it is unset, the adapter does not require a SendGrid
+          bearer token.
         </p>
 
         <h3>Amazon SES v2</h3>
@@ -175,8 +175,8 @@ poller.result(timeout=10)`}
           </code>
         </pre>
         <p>
-          Configure <code>SQRZL_ACS_CONNECTION_STRING</code> on Sqrzl with the
-          same base64 access key. This transport adapts the official SDK to the
+          Configure <code>ACS_CONNECTION_STRING</code> on Sqrzl with the same
+          base64 access key. This transport adapts the official SDK to the
           emulator's local HTTP endpoint after the SDK signs the request.
         </p>
       </DocSection>
@@ -196,14 +196,14 @@ poller.result(timeout=10)`}
                 <code>SQRZL_SECRET_ACCESS_KEY</code>
               </td>
               <td>
-                Set both to enable shared provider and admin authentication.
-                The default Compose values are <code>admin</code> and{' '}
+                Set both for shared AWS/local-storage credentials and admin
+                sign-in. The default Compose values are <code>admin</code> and{' '}
                 <code>sqrzl-secret</code>.
               </td>
             </tr>
             <tr>
               <td>
-                <code>SQRZL_SENDGRID_API_KEY</code>
+                <code>SENDGRID_API_KEY</code>
               </td>
               <td>
                 Require this bearer token on the SendGrid adapter when set.
@@ -211,11 +211,11 @@ poller.result(timeout=10)`}
             </tr>
             <tr>
               <td>
-                <code>SQRZL_ACS_CONNECTION_STRING</code>
+                <code>ACS_CONNECTION_STRING</code>
               </td>
               <td>
-                Set <code>endpoint=&lt;url&gt;;accesskey=&lt;base64&gt;</code> to
-                enable ACS HMAC authentication for Email and SMS.
+                Set <code>endpoint=&lt;url&gt;;accesskey=&lt;base64&gt;</code>{' '}
+                to enable ACS HMAC authentication for Email and SMS.
               </td>
             </tr>
           </tbody>
@@ -241,6 +241,36 @@ poller.result(timeout=10)`}
         </p>
       </DocSection>
 
+      <DocSection title="Simulate SES events">
+        <p>
+          In the Mailboxes UI, open an SES message with a configuration-set
+          name. Configure its event destination, choose an event type and
+          simulate the event. History shows the payload, callback result and
+          pending or completed state. The same workflow is available through the
+          admin API and MCP tools.
+        </p>
+        <p>
+          Supported event types are Send, Delivery, Bounce, Complaint, Reject,
+          DeliveryDelay and Rendering Failure.{' '}
+          <code>SES_CONFIGURATION_SETS</code> optionally restricts accepted
+          configuration-set names. These are local simulations, not SES delivery
+          to real recipients.
+        </p>
+        <p>
+          A durable intent is recorded before a callback. Reusing the same{' '}
+          <code>request_id</code> and payload replays the stored outcome; a
+          changed payload is rejected. A pending callback can have an uncertain
+          external outcome and is not automatically resent. Check the receiver
+          before taking further action.
+        </p>
+        <p>
+          Callbacks default to loopback destinations, reject redirects and have
+          a 5000 ms timeout. Configure additional hosts with{' '}
+          <code>SQRZL_MAIL_CALLBACK_ALLOWED_HOSTS</code> and the timeout with{' '}
+          <code>SQRZL_MAIL_CALLBACK_TIMEOUT_MS</code>. History uses bounded,
+          indexed pages.
+        </p>
+      </DocSection>
       <DocSection title="Supported behavior">
         <ul>
           <li>
@@ -284,11 +314,10 @@ poller.result(timeout=10)`}
           attachments, and stored records.
         </p>
         <p>
-          Oversized HTTP requests receive a provider-shaped{' '}
-          <code>413</code>; SMTP returns <code>552</code>. Rejected requests do
-          not leave partial mailbox captures. See{' '}
-          <a href="docs/configuration/">configuration</a> for the request-body
-          limit.
+          Oversized HTTP requests receive a provider-shaped <code>413</code>;
+          SMTP returns <code>552</code>. Rejected requests do not leave partial
+          mailbox captures. See <a href="docs/configuration/">configuration</a>{' '}
+          for the request-body limit.
         </p>
       </DocSection>
     </DocsLayout>

@@ -3,6 +3,12 @@ import { GuideList } from '../../components/guide-list';
 
 const guides = [
   {
+    href: 'docs/runtime/',
+    title: 'Runtime and diagnostics',
+    description:
+      'Set admission budgets, drain active work and inspect readiness.',
+  },
+  {
     href: 'docs/quick-start/',
     title: 'Quickstart',
     description: 'Start Sqrzl with Docker Compose and check that it is ready.',
@@ -48,12 +54,14 @@ const guides = [
   {
     href: 'docs/email/',
     title: 'Email',
-    description: 'Connect SMTP, SendGrid, SES, or Azure Communication Services Email.',
+    description:
+      'Connect SMTP, SendGrid, SES, or Azure Communication Services Email.',
   },
   {
     href: 'docs/sms/',
     title: 'SMS and MMS',
-    description: 'Connect a text provider and simulate inbound messages and delivery.',
+    description:
+      'Connect a text provider and simulate inbound messages and delivery.',
   },
   {
     href: 'docs/compatibility/',

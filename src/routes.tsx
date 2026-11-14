@@ -14,6 +14,7 @@ import EmailDocsPage from './pages/docs/email';
 import EmailAndMessagingDocsPage from './pages/docs/email-and-messaging';
 import McpDocsPage from './pages/docs/mcp';
 import OciDocsPage from './pages/docs/oci';
+import RuntimeDocsPage from './pages/docs/runtime';
 import PersistenceDocsPage from './pages/docs/persistence';
 import QuickStartDocsPage from './pages/docs/quick-start';
 import S3DocsPage from './pages/docs/s3';
@@ -34,6 +35,7 @@ export const registry = createRouteRegistry(() => {
     route('/docs/oci', OciDocsPage);
     route('/docs/configuration', ConfigurationDocsPage);
     route('/docs/persistence', PersistenceDocsPage);
+    route('/docs/runtime', RuntimeDocsPage);
     route('/docs/email', EmailDocsPage);
     route('/docs/sms', SmsDocsPage);
     route('/docs/email-and-messaging', EmailAndMessagingDocsPage);

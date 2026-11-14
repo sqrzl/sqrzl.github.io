@@ -1,3 +1,4 @@
+import { currentRoute } from '@askrjs/askr/router';
 import { GitHubLogo } from '@askrjs/logos';
 import { BookOpenIcon } from '@askrjs/lucide';
 import { Header, NavBrand, NavGroup, Navbar } from '@askrjs/themes/components';
@@ -9,9 +10,12 @@ const sqrzlLogo = image(new URL('../assets/sqrzl-logo.png', import.meta.url), {
 });
 
 export function SiteHeader() {
+  const path = currentRoute().path;
+  const skipTarget = `${path === '/' ? '/' : `${path.replace(/\/+$/, '')}/`}#content`;
+
   return (
     <>
-      <a class="skip-link" href="#content">
+      <a class="skip-link" href={skipTarget}>
         Skip to content
       </a>
       <Header className="site-header">

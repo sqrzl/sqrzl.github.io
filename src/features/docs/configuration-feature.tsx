@@ -10,22 +10,24 @@ export default function ConfigurationDocsFeature() {
     >
       <DocSection title="Authentication">
         <p>
-          The checked-in Compose setup enables provider and admin authentication
-          with <code>admin</code> and <code>sqrzl-secret</code>. Change these
-          values before sharing a local environment.
+          The checked-in Compose setup configures shared local credentials and
+          admin sign-in with <code>admin</code> and <code>sqrzl-secret</code>.
+          Change these values before sharing a local environment.
         </p>
         <p>
           For an open development instance, remove{' '}
           <code>SQRZL_ACCESS_KEY_ID</code> and{' '}
-          <code>SQRZL_SECRET_ACCESS_KEY</code> from the service environment.
-          Authentication is enabled only when both are set. Provider-specific
-          settings can override the generic credentials.
+          <code>SQRZL_SECRET_ACCESS_KEY</code> from the service environment. Set
+          both generic values or neither; an incomplete pair fails startup.
+          Provider-specific credentials can still require authentication for
+          their adapter when the generic pair is absent.
         </p>
         <p>
           Set <code>SQRZL_ADMIN_AUTH_DISABLED=true</code> to leave the UI and
           admin API open while keeping provider API authentication enabled.
         </p>
         <p>
+          Health lists the providers whose authentication is actually enforced.
           MCP uses the same listener but has its own OAuth bearer-token flow
           when protected. See <a href="docs/mcp/">MCP configuration</a> before
           connecting an MCP client to an authenticated instance.
@@ -107,7 +109,16 @@ export default function ConfigurationDocsFeature() {
         </p>
       </DocSection>
 
-      <DocSection title="Provider credentials">
+      <DocSection title="Concurrency and shutdown">
+        <p>
+          Shared connection, request, encoded-byte, MCP-session and
+          SMTP-recipient limits are documented in{' '}
+          <a href="docs/runtime/">Runtime and diagnostics</a>, together with
+          graceful shutdown, readiness and metrics. Invalid admission limits
+          fail startup before storage is created.
+        </p>
+      </DocSection>
+      <DocSection title="Provider settings">
         <ul>
           <li>
             Azure overrides: <code>AZURE_ACCOUNT</code> and{' '}
@@ -122,6 +133,32 @@ export default function ConfigurationDocsFeature() {
             variables.
           </li>
         </ul>
+        <ul>
+          <li>
+            SendGrid uses <code>SENDGRID_API_KEY</code>.
+          </li>
+          <li>
+            Twilio uses <code>TWILIO_ACCOUNT_SID</code> and{' '}
+            <code>TWILIO_AUTH_TOKEN</code>, with optional{' '}
+            <code>TWILIO_API_KEY_SID</code> and{' '}
+            <code>TWILIO_API_KEY_SECRET</code> configured together.
+          </li>
+          <li>
+            ACS Email and SMS use <code>ACS_CONNECTION_STRING</code>.
+          </li>
+          <li>
+            SES configuration-set restrictions use{' '}
+            <code>SES_CONFIGURATION_SETS</code>.
+          </li>
+        </ul>
+        <p>
+          Vendor settings use provider prefixes; <code>SQRZL_*</code> names
+          configure the emulator and its local policy. The{' '}
+          <a href="https://github.com/sqrzl/sqrzl-emulator/blob/main/README.md#configuration">
+            full environment reference
+          </a>{' '}
+          includes lifecycle, signing and callback controls.
+        </p>
         <p>
           Provider credential pairs must be configured together. See{' '}
           <a href="docs/s3/">S3</a>, <a href="docs/azure-blob/">Azure</a>,{' '}

@@ -1,0 +1,12 @@
+{
+  "source_sha": "b3553c1501a5d4f7cda23991a77861360740acbc",
+  "captured_from": "GET /healthz of a clean-source build with default environment",
+  "defaults": {
+    "SQRZL_MAX_CONNECTIONS": 128,
+    "SQRZL_MAX_INFLIGHT_REQUESTS": 4,
+    "SQRZL_MAX_INFLIGHT_BYTES": 536870912,
+    "SQRZL_MAX_MCP_SESSIONS": 128,
+    "SQRZL_MAX_SMTP_RECIPIENTS": 1000,
+    "SQRZL_DRAIN_TIMEOUT_MS": 30000
+  }
+}

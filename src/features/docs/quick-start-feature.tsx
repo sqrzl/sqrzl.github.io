@@ -95,12 +95,12 @@ export default function QuickStartDocsFeature() {
 
       <DocSection title="Stop Sqrzl">
         <pre>
-          <code>docker compose down</code>
+          <code>docker compose down --timeout 35</code>
         </pre>
         <p>
-          This stops the container and keeps the named storage volume. See{' '}
-          <a href="docs/persistence/">Data and reset</a> before deleting stored
-          data.
+          This allows the default 30-second graceful drain and keeps the named
+          storage volume. See <a href="docs/persistence/">Data and reset</a>{' '}
+          before deleting stored data.
         </p>
       </DocSection>
     </DocsLayout>

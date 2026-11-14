@@ -8,7 +8,7 @@ export default function App({ children }: { children?: unknown }) {
     <div class="site-shell">
       <SiteHeader />
 
-      <Main id="content" className="main-content">
+      <Main id="content" tabIndex={-1} className="main-content">
         {children}
       </Main>
 
