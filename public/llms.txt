@@ -11,6 +11,7 @@ For the complete documentation content in one file, see [full text documentation
 - [Quickstart](https://sqrzl.github.io/docs/quick-start/): Start Sqrzl with Docker Compose and check readiness.
 - [MCP integration](https://sqrzl.github.io/docs/mcp/): Connect with Streamable HTTP, discover tools and resources, and configure OAuth.
 - [Configuration](https://sqrzl.github.io/docs/configuration/): Configure authentication, ports, storage, and request limits.
+- [Runtime and diagnostics](https://sqrzl.github.io/docs/runtime/): Admission limits, graceful draining, subsystem readiness and Prometheus metrics.
 - [Data and reset](https://sqrzl.github.io/docs/persistence/): Keep or reset local emulator data.
 
 ## Email and SMS

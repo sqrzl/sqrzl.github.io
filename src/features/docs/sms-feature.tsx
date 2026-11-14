@@ -35,7 +35,9 @@ export default function SmsDocsFeature() {
                 <code>http://localhost:9000</code>
               </td>
               <td>
-                <code>POST /2010-04-01/Accounts/{'{AccountSid}'}/Messages.json</code>
+                <code>
+                  POST /2010-04-01/Accounts/{'{AccountSid}'}/Messages.json
+                </code>
               </td>
             </tr>
             <tr>
@@ -60,7 +62,8 @@ export default function SmsDocsFeature() {
                 <code>http://localhost:9000</code>
               </td>
               <td>
-                <code>POST /sms?api-version=...</code> with one or more recipients.
+                <code>POST /sms?api-version=...</code> with one or more
+                recipients.
               </td>
             </tr>
           </tbody>
@@ -75,8 +78,8 @@ export default function SmsDocsFeature() {
 import twilio
 
 client = twilio.Client(
-    os.environ["SQRZL_TWILIO_ACCOUNT_SID"],
-    os.environ["SQRZL_TWILIO_AUTH_TOKEN"],
+    os.environ["TWILIO_ACCOUNT_SID"],
+    os.environ["TWILIO_AUTH_TOKEN"],
 )
 client.api.base_url = "http://localhost:9000"
 message = client.messages.create(
@@ -87,8 +90,8 @@ message = client.messages.create(
           </code>
         </pre>
         <p>
-          Configure both <code>SQRZL_TWILIO_ACCOUNT_SID</code> and{' '}
-          <code>SQRZL_TWILIO_AUTH_TOKEN</code> on Sqrzl to require Basic
+          Configure both <code>TWILIO_ACCOUNT_SID</code> and{' '}
+          <code>TWILIO_AUTH_TOKEN</code> on Sqrzl to require Basic
           authentication and sign Twilio callbacks.
         </p>
 
@@ -169,16 +172,15 @@ client.send(
         <p>
           The ACS SDK normalizes its endpoint to HTTPS. This transport rewrites
           the signed request to the emulator's local HTTP listener. Set{' '}
-          <code>SQRZL_ACS_CONNECTION_STRING</code> on Sqrzl with the same access
-          key.
+          <code>ACS_CONNECTION_STRING</code> on Sqrzl with the same access key.
         </p>
       </DocSection>
 
       <DocSection title="Configure authentication">
         <ul>
           <li>
-            Twilio uses <code>SQRZL_TWILIO_ACCOUNT_SID</code> and{' '}
-            <code>SQRZL_TWILIO_AUTH_TOKEN</code> together.
+            Twilio uses <code>TWILIO_ACCOUNT_SID</code> and{' '}
+            <code>TWILIO_AUTH_TOKEN</code> together.
           </li>
           <li>
             AWS adapters use <code>SQRZL_ACCESS_KEY_ID</code> and{' '}
@@ -186,8 +188,7 @@ client.send(
             is enabled.
           </li>
           <li>
-            ACS SMS uses the shared key in{' '}
-            <code>SQRZL_ACS_CONNECTION_STRING</code>.
+            ACS SMS uses the shared key in <code>ACS_CONNECTION_STRING</code>.
           </li>
         </ul>
         <p>
@@ -243,8 +244,8 @@ client.send(
           <li>
             SNS accepts direct E.164 <code>PhoneNumber</code> Publish requests,
             raw messages or <code>MessageStructure=json</code> selecting the{' '}
-            <code>sms</code> value with <code>default</code> fallback, and up
-            to 10 message attributes.
+            <code>sms</code> value with <code>default</code> fallback, and up to
+            10 message attributes.
           </li>
           <li>
             SMS Voice v2 accepts the documented JSON fields for its text and

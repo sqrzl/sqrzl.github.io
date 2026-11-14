@@ -60,6 +60,23 @@ export default function S3DocsFeature() {
           supported S3 operations.
         </p>
       </DocSection>
+      <DocSection title="Checksum and materialization boundaries">
+        <p>
+          Direct PUT accepts selected native checksums. Default boto3 multipart
+          part checksums are explicitly unsupported and return{' '}
+          <code>501 NotImplemented</code>. For the ordinary multipart workflow,
+          select <code>request_checksum_calculation="when_required"</code> in
+          the botocore configuration; this is an explicit opt-out from
+          additional-checksum defaults.
+        </p>
+        <p>
+          Full GET and copy have a local 64 MiB materialization bound. Larger
+          full requests return <code>501</code> before payload reads. Large
+          streamed writes, metadata-only HEAD and bounded ranges are separate
+          supported paths. A measured 1 GiB multipart upload does not imply an
+          unbounded full GET.
+        </p>
+      </DocSection>
     </DocsLayout>
   );
 }

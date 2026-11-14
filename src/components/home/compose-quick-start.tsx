@@ -16,7 +16,10 @@ export function ComposeQuickStart() {
           'git clone https://github.com/sqrzl/sqrzl-emulator.git\ncd sqrzl-emulator\ndocker compose up --build'
         }
       />
-      <p>Or pull the latest published container image from GHCR:</p>
+      <p>
+        Published container images are also available from GHCR; their release
+        may lag main:
+      </p>
       <CodeBlock code="docker pull ghcr.io/sqrzl/sqrzl-emulator:latest" />
       <p>
         Storage APIs are at <code>localhost:9000</code>; the admin UI is at{' '}

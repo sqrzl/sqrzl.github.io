@@ -13,7 +13,7 @@ warm neutral palette and compact geometry applied through Askr token overrides.
 
 ## Develop locally
 
-Requirements: Node.js 24 or newer and npm.
+Requirements: Node.js 24.11+ (24.x) or Node.js 26+ and npm. CI uses Node 26.
 
 ```sh
 npm ci
@@ -24,16 +24,17 @@ The local development server is available at <http://127.0.0.1:5173>.
 
 Useful commands:
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Vite Plus development server. |
-| `npm run build` | Build browser assets and generate all routes into `dist/static`. |
-| `npm run generate` | Run `askr ssg` using the shared route registry and client assets. |
-| `npm run preview` | Preview the generated site from `dist/static`. |
-| `npm run analyze` | Run Askr's read-only source analysis. |
-| `npm run type-check` | Check TypeScript types. |
-| `npm run lint` | Run Vite Plus linting. |
-| `npm run fmt` | Format the project. |
+| Command              | Purpose                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`        | Start the Vite Plus development server.                                                                      |
+| `npm run build`      | Build static pages, Markdown mirrors, full-text docs and build identity into `dist/static`.                  |
+| `npm run generate`   | Run `askr ssg` using the shared route registry and client assets.                                            |
+| `npm run preview`    | Preview the generated site from `dist/static`.                                                               |
+| `npm test`           | Check generated routes, links, code examples, content contracts and workspace discovery. Run after building. |
+| `npm run analyze`    | Run Askr's read-only source analysis.                                                                        |
+| `npm run type-check` | Check TypeScript types.                                                                                      |
+| `npm run lint`       | Run Vite Plus linting.                                                                                       |
+| `npm run fmt`        | Format the project.                                                                                          |
 
 ## Project structure
 
@@ -61,14 +62,34 @@ first page load.
 Use kebab-case for route paths and source filenames. To add a documentation
 page, add its thin route page and feature, register the path in
 `src/routes.tsx`, add its link to `src/components/docs-sidebar.tsx`, and add its
-title and description to the route metadata in `ssg.config.ts`. For a standalone
-Markdown version, add its file under `public/docs/` and set the route's
-`markdown` metadata field.
+title and description to the route metadata in `ssg.config.ts`. Markdown mirrors and `llms-full.txt` are generated from rendered page content by
+`scripts/generate-content.mjs`; do not maintain separate copies under `public/`.
+Code blocks retain their original whitespace and characters. Runtime-default tests
+use a fixture captured from the qualified emulator’s `/healthz`; its source SHA
+is recorded in `tests/fixtures/emulator-runtime.json`. Refresh that fixture from
+a qualified source build when the documented defaults change. `parse5` parses the
+HTML for generation and generated-site checks. The route registry remains the
+source of page rendering and navigation.
 
 ## Deployment
 
 [`sqrzl/sqrzl.github.io`](https://github.com/sqrzl/sqrzl.github.io) is the
 canonical source repository and publishes the site at the root domain. Push to
-its `main` branch to deploy. Its `.github/workflows/pages.yml` installs locked
-dependencies with `npm ci`, runs `npm run build` (Vite Plus followed by
-`askr ssg`), and publishes `dist/static` with GitHub's Pages actions.
+its `main` branch to deploy. Its `.github/workflows/pages.yml` validates pull requests without deploying them.
+Type checking, linting, Askr analysis, dependency audit, a full build and generated
+content/tooling checks must pass before main publishes `dist/static`. After
+deployment, a bounded smoke check verifies the clean source identity in
+`build-info.json` and current HTML, Markdown and full-text content on the public
+site. The framework generates `404.html`; its root base URL keeps assets and
+recovery links working for unknown nested paths.
+
+## Tooling dependency overrides
+
+The current `@npmcli/map-workspaces` release, reached through the Askr CLI,
+constrains `glob` and `minimatch` below their security fixes. Overrides are scoped
+to that package and select patched glob 14 and minimatch 11 releases. Regression
+tests exercise workspace exclusions/reinclusion and cancellation through the
+actual consumer, alongside the real Askr commands. Remove these overrides when
+the parent supports patched ranges. The audit gate checks moderate and higher
+findings. References: [glob advisory](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4)
+and [minimatch advisory](https://github.com/advisories/GHSA-g3hv-75wg-m249).
